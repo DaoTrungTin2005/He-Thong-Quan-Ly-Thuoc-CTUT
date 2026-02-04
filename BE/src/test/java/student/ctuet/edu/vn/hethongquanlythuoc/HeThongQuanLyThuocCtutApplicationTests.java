@@ -1,10 +1,10 @@
-package student.ctuet.edu.vn.pharmacy_management;
+package student.ctuet.edu.vn.hethongquanlythuoc;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PharmacymanagementApplicationTests {
+class HeThongQuanLyThuocCtutApplicationTests {
 
 	@Test
 	void contextLoads() {
