@@ -32,7 +32,7 @@ export default function FormLogin() {
           </button>
         </div>
         <Button
-          className="w-1/2 h-10 bg-white text-black rounded-lg"
+          className="w-1/2 h-10 bg-white text-black rounded-lg hover:border hover:border-2 hover:border-blue-600 hover:ring-2 hover:ring-blue-500"
           type="submit"
         >
           ĐĂNG NHẬP

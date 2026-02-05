@@ -13,7 +13,7 @@ export default function Button({
         rounded-lg
         px-4 py-2
         hover:opacity-90
-        transition cursor-pointer hover:border hover:border-2 hover:border-blue-600 hover:ring-2 hover:ring-blue-500
+        transition cursor-pointer 
       `}
     >
       {children}

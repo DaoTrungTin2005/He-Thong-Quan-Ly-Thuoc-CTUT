@@ -1,11 +1,16 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Login";
+import Account from "../pages/Account";
+import MainLayout from "../layouts/MainLayout";
+import CreateAccount from "../pages/CreateAccount.jsx";
+import UpdateAccount from "../pages/UpdateAccount.jsx";
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Auth */}
         <Route
           path="/login"
           element={
@@ -14,6 +19,16 @@ export default function AppRouter() {
             </AuthLayout>
           }
         />
+        {/* Main layout */}
+        <Route element={<MainLayout />}>
+          <Route path="/account" element={<Account />} />
+        </Route>
+        <Route element={<MainLayout hideHeader={false} />}>
+          <Route path="/account/create" element={<CreateAccount />} />
+        </Route>
+        <Route element={<MainLayout hideHeader={false} />}>
+          <Route path="/account/update" element={<UpdateAccount />} />
+        </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
