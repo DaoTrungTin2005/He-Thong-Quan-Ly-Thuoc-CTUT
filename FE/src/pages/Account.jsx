@@ -1,6 +1,8 @@
 import Button from "../components/Button";
 import add from "../assets/images/add.png";
 import Table from "../components/Table/Table.jsx";
+import FormChangePass from "../components/FormChangePass.jsx";
+import { useState } from "react";
 export default function Account() {
   const columns = [
     { key: "id", label: "STT", align: "center" },
@@ -89,6 +91,7 @@ export default function Account() {
 
   const handleResetPassword = (row) => {
     console.log("Đặt lại mật khẩu:", row);
+    setShowChangePasswordForm(true);
   };
 
   const handleLock = (row) => {
@@ -100,7 +103,7 @@ export default function Account() {
     console.log("Mở khóa:", row);
     // API call để mở khóa tài khoản
   };
-
+  const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
   return (
     <div className="w-3/4 bg-white absolute top-20 left-85 h-5/6 rounded-2xl shadow-xl">
       <h1 className="text-black text-center font-bold text-2xl pt-5 pb-3">
@@ -120,6 +123,11 @@ export default function Account() {
           onUnlock={handleUnlock}
         />
       </div>
+      <FormChangePass
+        isVisible={showChangePasswordForm}
+        onClose={() => setShowChangePasswordForm(false)}
+        showCurrentPassword={false}
+      />
     </div>
   );
 }
