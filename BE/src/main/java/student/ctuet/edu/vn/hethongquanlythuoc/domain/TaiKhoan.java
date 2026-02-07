@@ -30,6 +30,9 @@ public class TaiKhoan {
     @Column(nullable = false, name = "mat_khau")
     private String matKhau;
 
+    @Column(nullable = false, name = "email", unique = true)
+    private String email;
+
     @ManyToOne
     @JoinColumn(name = "ma_vai_tro", nullable = false)
     private VaiTro vaiTro;
