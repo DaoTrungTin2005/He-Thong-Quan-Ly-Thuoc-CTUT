@@ -6,6 +6,8 @@ import MainLayout from "../layouts/MainLayout";
 import CreateAccount from "../pages/CreateAccount.jsx";
 import UpdateAccount from "../pages/UpdateAccount.jsx";
 import Personal from "../pages/Personal.jsx";
+import Medicine from "../pages/Medicine.jsx";
+import MedicineExport from "../pages/MedicineExport.jsx";
 
 export default function AppRouter() {
   return (
@@ -30,8 +32,20 @@ export default function AppRouter() {
         <Route element={<MainLayout hideHeader={false} />}>
           <Route path="/account/update" element={<UpdateAccount />} />
         </Route>
-        <Route element={<MainLayout hideHeader={false} />}>
+        <Route
+          element={
+            <MainLayout hideHeader={false} title="Quản Lí Thông Tin Cá Nhân" />
+          }
+        >
           <Route path="/personal" element={<Personal />} />
+        </Route>
+        <Route element={<MainLayout hideHeader={true} title="Quản Lí Thuốc" />}>
+          <Route path="/medicine" element={<Medicine />} />
+        </Route>
+        <Route
+          element={<MainLayout hideHeader={false} title="Quản Lí Thuốc" />}
+        >
+          <Route path="/medicine/export" element={<MedicineExport />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

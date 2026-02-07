@@ -4,7 +4,10 @@ import Button from "../components/Button.jsx";
 import Search from "../components/Search.jsx";
 import LogoCTUT from "../assets/images/LogoCTUT.png";
 import { Outlet } from "react-router-dom";
-export default function MainLayout({ hideHeader = true }) {
+export default function MainLayout({
+  hideHeader = true,
+  title = "Quản Lí Tài Khoản",
+}) {
   return (
     <>
       <div className="flex w-full bg-[#D4D4D4]">
@@ -22,7 +25,7 @@ export default function MainLayout({ hideHeader = true }) {
           </Button>
         </div>
         <div className=" w-full h-screen relative flex flex-col">
-          <Search hideHeader={hideHeader} />
+          <Search hideHeader={hideHeader} title={title} />
           <Outlet />
         </div>
       </div>

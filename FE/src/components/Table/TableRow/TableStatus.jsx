@@ -18,6 +18,14 @@ export default function TableStatus({ status }) {
       background: "bg-[linear-gradient(90deg,#34C759_27%,#1E5128_98.56%)]",
       label: "Đã Thất Bại",
     },
+    exp: {
+      text: "text-[#B11010]",
+      label: "Xuất",
+    },
+    imp: {
+      text: "text-[#49C10C]",
+      label: "Nhập",
+    },
   };
 
   const config = statusConfig[status] || statusConfig.inactive;
@@ -29,8 +37,13 @@ export default function TableStatus({ status }) {
           {config.label}
         </span>
       )}
+      {(status === "imp" || status === "exp") && (
+        <span className={`py-1 text-xs font-bold ${config.text} `}>
+          {config.label}
+        </span>
+      )}
       {status === "success" && (
-        <div className="w-35 h-8  flex items-center justify-center gap-2 py-2 rounded-full shadow-2xl bg-[linear-gradient(90deg,#3AD37E_34.13%,#1E6D41_98.56%)] text-white font-bold text-xs">
+        <div className="w-35 h-8 flex items-center justify-center gap-2 py-2 rounded-full shadow-2xl bg-[linear-gradient(90deg,#3AD37E_34.13%,#1E6D41_98.56%)] text-white font-bold text-xs">
           <span className="w-6 h-6 flex items-center justify-center bg-green-700 shadow-[2px_3px_10px_rgba(0,0,0,0.9)] rounded-full p-1">
             <CheckIcon />
           </span>

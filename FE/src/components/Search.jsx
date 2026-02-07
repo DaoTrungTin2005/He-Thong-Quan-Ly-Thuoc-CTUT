@@ -1,12 +1,15 @@
 import Title from "./Title";
 import VectorSearch from "../assets/svg/VectorSearch.jsx";
-export default function Search({ hideHeader = true }) {
+export default function Search({
+  hideHeader = true,
+  title = "Quản Lí Tài Khoản",
+}) {
   return (
     <div className="w-4/5 h-12 pl-5 absolute top-0 left-1/5 overflow-hidden flex items-center bg-[#264580]">
       <Title
         wrapperClass="text-white"
         subtitleClass="text-[7px] italic"
-        title="Quản Lí Tài Khoản"
+        title={title}
         subtitle="Phòng Y Tế - Trường Đại học Kỹ Thuật Công Nghệ Cần Thơ"
       />
       {hideHeader && (
