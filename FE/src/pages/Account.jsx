@@ -7,7 +7,7 @@ export default function Account() {
     { key: "username", label: "Tên đăng nhập", align: "left" },
     { key: "name", label: "Tên người dùng", align: "left" },
     { key: "role", label: "Vai trò", align: "left" },
-    { key: "status", label: "Trạng thái", align: "center" },
+    { key: "status", label: "Trạng thái", align: "left" },
     { key: "action", label: "THAO TÁC", align: "center" },
   ];
 

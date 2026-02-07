@@ -5,6 +5,7 @@ import Account from "../pages/Account";
 import MainLayout from "../layouts/MainLayout";
 import CreateAccount from "../pages/CreateAccount.jsx";
 import UpdateAccount from "../pages/UpdateAccount.jsx";
+import Personal from "../pages/Personal.jsx";
 
 export default function AppRouter() {
   return (
@@ -28,6 +29,9 @@ export default function AppRouter() {
         </Route>
         <Route element={<MainLayout hideHeader={false} />}>
           <Route path="/account/update" element={<UpdateAccount />} />
+        </Route>
+        <Route element={<MainLayout hideHeader={false} />}>
+          <Route path="/personal" element={<Personal />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

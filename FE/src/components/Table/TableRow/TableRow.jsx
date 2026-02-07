@@ -12,12 +12,18 @@ export default function TableRow({
 }) {
   const isEven = index % 2 === 0;
 
+  // Xác định màu nền dựa trên status
+  const getRowBackground = () => {
+    if (row.status === "success") {
+      return "bg-[#E8F5E9] font-bold"; // Màu xanh lá nhạt cho success
+    }
+    if (row.status === "failed") {
+      return "bg-[#FFEBEE] font-bold"; // Màu đỏ nhạt cho failed
+    }
+    return isEven ? "bg-white" : "bg-[#FAFAFA]"; // Màu mặc định
+  };
   return (
-    <tr
-      className={`border-b border-[#EEEEEE] text-sm ${
-        isEven ? "bg-white" : "bg-[#FAFAFA]"
-      }`}
-    >
+    <tr className={`border-b border-[#EEEEEE] text-sm ${getRowBackground()}`}>
       {columns.map((col, colIndex) => (
         <td
           key={colIndex}
@@ -36,7 +42,7 @@ export default function TableRow({
               onUnlock={onUnlock}
             />
           ) : (
-            <span className="text-[#292D32]">{row[col.key]}</span>
+            <span>{row[col.key]}</span>
           )}
         </td>
       ))}
