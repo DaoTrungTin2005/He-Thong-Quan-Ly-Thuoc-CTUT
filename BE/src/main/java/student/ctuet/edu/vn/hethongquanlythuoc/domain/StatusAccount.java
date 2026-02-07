@@ -15,18 +15,17 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "vai_tro")
-public class VaiTro {
+@Table(name = "trang_thai_tai_khoan")
+public class StatusAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ma_vai_tro")
-    private Long maVaiTro;
+    @Column(name = "ma_trang_thai_tai_khoan")
+    private long statusAccountId;
 
-    @Column(nullable = false, unique = true, name = "ten_vai_tro")
-    private String tenVaiTro;
+    @Column(nullable = false, unique = true, name = "trang_thai_tai_khoan")
+    private String statusAccount;
 
-    private String moTa;
+    @OneToMany(mappedBy = "statusAccount")
+    private List<Account> accounts;
 
-    @OneToMany(mappedBy = "vaiTro")
-    private List<TaiKhoan> taiKhoans;
 }

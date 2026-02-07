@@ -15,29 +15,29 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "tai_khoan")
-public class TaiKhoan {
+public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_tai_khoan")
-    private long maTaiKhoan;
+    private long id;
 
     @Column(nullable = false, unique = true, name = "ten_dang_nhap")
-    private String tenDangNhap;
+    private String username;
 
     @Column(name = "ten_nguoi_dung")
-    private String tenNguoiDung;
+    private String fullname;
 
     @Column(nullable = false, name = "mat_khau")
-    private String matKhau;
+    private String password;
 
     @Column(nullable = false, name = "email", unique = true)
     private String email;
 
     @ManyToOne
     @JoinColumn(name = "ma_vai_tro", nullable = false)
-    private VaiTro vaiTro;
+    private Role role;
 
     @ManyToOne
     @JoinColumn(name = "ma_trang_thai_tai_khoan", nullable = false)
-    private TrangThaiTaiKhoan trangThaiTaiKhoan;
+    private StatusAccount statusAccount;
 }
