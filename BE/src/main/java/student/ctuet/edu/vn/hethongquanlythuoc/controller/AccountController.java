@@ -32,7 +32,10 @@ public class AccountController {
                 account.getFullname(),
                 account.getUsername(),
                 account.getEmail(),
-                account.getRole().getRoleName());
+                account.getRole().getRoleName(),
+                account.getStatusAccount().getStatusAccount(),
+                account.getCreatedAt(),
+                account.getUpdatedAt());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
