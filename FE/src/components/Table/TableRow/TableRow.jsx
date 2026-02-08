@@ -9,6 +9,9 @@ export default function TableRow({
   onResetPassword,
   onLock,
   onUnlock,
+  onUpdate,
+  onAdd,
+  onRemove,
 }) {
   const isEven = index % 2 === 0;
 
@@ -40,6 +43,9 @@ export default function TableRow({
               onResetPassword={onResetPassword}
               onLock={onLock}
               onUnlock={onUnlock}
+              onUpdate={onUpdate}
+              onAdd={onAdd}
+              onRemove={onRemove}
             />
           ) : (
             <span>{row[col.key]}</span>

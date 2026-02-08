@@ -8,6 +8,9 @@ export default function Table({
   onResetPassword,
   onLock,
   onUnlock,
+  onUpdate,
+  onAdd,
+  onRemove,
 }) {
   return (
     <table className="w-full border-collapse">
@@ -26,6 +29,9 @@ export default function Table({
             onResetPassword={onResetPassword}
             onLock={onLock}
             onUnlock={onUnlock}
+            onUpdate={onUpdate}
+            onAdd={onAdd}
+            onRemove={onRemove}
           />
         ))}
       </tbody>
