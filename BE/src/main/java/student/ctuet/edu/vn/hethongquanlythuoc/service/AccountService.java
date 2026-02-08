@@ -39,7 +39,7 @@ public class AccountService {
         account.setEmail(request.email());
         account.setPassword(passwordEncoder.encode(request.password()));
 
-        var role = roleResitory.findByName(request.role())
+        var role = roleResitory.findByRoleName(request.role())
                 .orElseThrow(() -> new RuntimeException("Vai trò không tồn tại"));
         account.setRole(role);
 
