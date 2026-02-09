@@ -16,6 +16,9 @@ export default function TableAction({
   const isLocked = rowData.status === "inactive";
   const isExported = rowData.status === "exported"; // Trạng thái đã xuất
   const isMedicineLocked = rowData.status === "lockMedicine"; // Trạng thái thuốc bị khóa
+  const isWaiting = rowData.status === "waiting";
+  const isCompleted = rowData.status === "completed";
+  const isDispensed = rowData.status === "dispensed";
 
   const handleAccess = () => {
     if (onAccess) {
@@ -100,7 +103,7 @@ export default function TableAction({
   // Nếu tài khoản bị khóa -> chỉ hiển thị nút "Mở khóa"
   if (isLocked) {
     return (
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-self-start gap-2">
         <Button
           onClick={handleUnlock}
           className="bg-[#264580] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
@@ -114,7 +117,7 @@ export default function TableAction({
   // Logic mới: Nếu đã xuất -> hiển thị Access, Add, Lock/Unlock
   if (isExported) {
     return (
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-self-start gap-2">
         <Button
           onClick={handleAccess}
           className="bg-[#3D8E10] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
@@ -149,7 +152,7 @@ export default function TableAction({
   }
   if (isMedicineLocked && !isExported) {
     return (
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-self-start gap-2">
         <Button
           onClick={handleAccess}
           className="bg-[#3D8E10] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
@@ -165,10 +168,51 @@ export default function TableAction({
       </div>
     );
   }
+  // Logic don thuoc
+  if (isWaiting) {
+    return (
+      <div className="flex items-center justify-self-start gap-2">
+        <Button className="bg-[#3D8E10] h-6 w-30 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          Xem chi tiết
+        </Button>
+
+        <Button className="bg-[#264580] h-6 w-25 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          Cấp thuốc
+        </Button>
+
+        <Button className="bg-[#8E1010] h-6 w-15 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          Xóa
+        </Button>
+      </div>
+    );
+  }
+  //
+  if (isCompleted) {
+    return (
+      <div className="flex items-center justify-self-start gap-2">
+        <Button className="bg-[#3D8E10] h-6 w-30 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          Xem chi tiết
+        </Button>
+      </div>
+    );
+  }
+  //
+  if (isDispensed) {
+    return (
+      <div className="flex items-center justify-self-start gap-2">
+        <Button className="bg-[#3D8E10] h-6 w-30 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          Xem chi tiết
+        </Button>
+        <Button className="bg-[#C0D204] h-6 w-25 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          Hoàn thuốc
+        </Button>
+      </div>
+    );
+  }
   // Logic mới: Nếu chưa xuất -> hiển thị Access, Add, Update, Remove
   if (!isExported && !isLocked && !isMedicineLocked) {
     return (
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-self-start gap-2">
         <Button
           onClick={handleAccess}
           className="bg-[#3D8E10] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
@@ -199,10 +243,9 @@ export default function TableAction({
       </div>
     );
   }
-
   // Nếu tài khoản đang hoạt động -> hiển thị 3 nút (logic cũ)
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-center justify-self-start gap-2">
       <Button
         onClick={handleResetPassword}
         className="bg-[#3D8E10] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"

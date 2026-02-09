@@ -23,7 +23,7 @@ export default function Alert({
   return (
     <>
       {show && (
-        <div className="w-150 bg-white absolute top-35 left-152 h-2/3 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-10">
+        <div className="w-200 bg-white absolute top-35 left-182 h-2/3 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-20">
           <button
             onClick={onClose}
             className="absolute top-3 right-3 font-bold text-xl cursor-pointer"

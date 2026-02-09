@@ -12,13 +12,13 @@ export default function FormLogin() {
         <input
           type="text"
           placeholder="Tên đăng nhập"
-          className="w-full border border-2 rounded-sm h-10 placeholder-white placeholder-font-medium cursor-pointer outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500 transition focus:placeholder:opacity-0"
+          className="w-full border border-2 rounded-sm h-10 placeholder-white placeholder-font-medium cursor-pointer outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500 transition focus:placeholder:opacity-0 p-2"
         />
         <div className="w-full relative">
           <input
             type={show ? "text" : "password"}
             placeholder="Mật khẩu"
-            className="w-full border border-2 rounded-sm h-10 placeholder-white placeholder-font-medium cursor-pointer outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500 transition focus:placeholder:opacity-0"
+            className="w-full border border-2 rounded-sm h-10 placeholder-white placeholder-font-medium cursor-pointer outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500 transition focus:placeholder:opacity-0 p-2"
           />
           <button
             type="button"

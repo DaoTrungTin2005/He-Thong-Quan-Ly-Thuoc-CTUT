@@ -11,7 +11,7 @@ export default function Medicine() {
     { key: "medicine", label: "TÊN THUỐC", align: "left" },
     { key: "quantity", label: "SỐ LƯỢNG", align: "left" },
     { key: "unit", label: "ĐƠN VỊ TÍNH", align: "left" },
-    { key: "action", label: "THAO TÁC", align: "center" },
+    { key: "action", label: "THAO TÁC", align: "left" },
   ];
   const data = [
     {
@@ -46,7 +46,7 @@ export default function Medicine() {
   const [showAlert, setShowAlert] = useState(false);
   return (
     <>
-      <div className="w-3/4 bg-white absolute top-20 left-85 h-5/6 rounded-2xl shadow-xl">
+      <div className="w-3/4 bg-white absolute top-20 left-105 h-5/6 rounded-2xl shadow-xl">
         <h1 className="text-black text-center font-bold text-2xl pt-5 pb-3">
           DANH SÁCH THUỐC
         </h1>
@@ -68,7 +68,7 @@ export default function Medicine() {
         </div>
       </div>
       {show && (
-        <div className="w-200 bg-white absolute top-60 left-125 h-1/2 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-10">
+        <div className="w-200 bg-white absolute top-60 left-175 h-1/2 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-10">
           <h1 className="text-black text-center font-bold text-2xl pt-5 pb-3 w-full">
             NHẬP THUỐC
           </h1>

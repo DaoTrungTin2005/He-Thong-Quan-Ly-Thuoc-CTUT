@@ -7,7 +7,7 @@ import pdfIcon from "../assets/images/pdfIcon.png";
 import Button from "../components/Button.jsx";
 export default function MedicineReport() {
   return (
-    <div className="w-3/4 bg-white absolute top-20 left-85 h-5/6 rounded-2xl shadow-xl">
+    <div className="w-3/4 bg-white absolute top-20 left-105 h-5/6 rounded-2xl shadow-xl">
       <div className="flex flex-col px-5 pt-1 justify-center text-black text-xs">
         <div className="cursor-pointer">
           <BackIcon />

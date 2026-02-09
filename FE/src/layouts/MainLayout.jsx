@@ -12,7 +12,7 @@ export default function MainLayout({
     <>
       <div className="flex w-full bg-[#D4D4D4]">
         <div className="h-screen w-1/5 shadow-xl bg-white flex flex-col fixed z-10 top-0 left-0">
-          <div className="flex items-center pl-8 pt-2">
+          <div className="flex items-center pl-12 pt-5">
             <img src={LogoCTUT} alt="Logo CTUT" className="w-10 h-10" />
             <Title
               title="Hệ Thống Quản Lí Thuốc "
@@ -20,7 +20,7 @@ export default function MainLayout({
             />
           </div>
           <SideBar />
-          <Button className="m-20 bg-[#951010] text-white hover:scale-105 transition-transform">
+          <Button className="bottom-[10%] bg-[#951010] text-white hover:scale-105 transition-transform absolute left-[30%]">
             ĐĂNG XUẤT
           </Button>
         </div>

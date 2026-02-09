@@ -51,7 +51,7 @@ export default function Personal() {
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 
   return (
-    <div className="w-3/4 bg-white absolute top-20 left-85 h-5/6 rounded-2xl shadow-xl">
+    <div className="w-3/4 bg-white absolute top-20 left-105 h-5/6 rounded-2xl shadow-xl">
       <div className="w-5/6 bg-white absolute left-25 top-2 h-45 rounded-2xl shadow-xl flex items-center justify-between gap-10 p-10">
         <div className="flex items-center justify-center gap-5">
           <img src={avatar} alt="Avatar" />
@@ -90,7 +90,7 @@ export default function Personal() {
         <h1 className="text-black text-center font-bold text-2xl pt-5 pb-1">
           LỊCH SỬ ĐĂNG NHẬP
         </h1>
-        <div className="overflow-y-auto max-h-[300px] p-5">
+        <div className="overflow-y-auto max-h-[400px] p-5">
           <Table columns={columns} data={data} />
         </div>
       </div>

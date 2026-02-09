@@ -8,7 +8,7 @@ export default function UpdateMedicine() {
     { name: "hanSuDung", label: "Hạn sử dụng:", width: "full" },
   ];
   return (
-    <div className="w-6/9 bg-white absolute top-20 left-105 h-1/2 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-10">
+    <div className="w-6/9 bg-white absolute top-20 left-125 h-1/2 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-10">
       <h1 className="text-black text-center font-bold text-2xl pt-5 pb-3 w-full">
         CẬP NHẬT THÔNG TIN THUỐC
       </h1>

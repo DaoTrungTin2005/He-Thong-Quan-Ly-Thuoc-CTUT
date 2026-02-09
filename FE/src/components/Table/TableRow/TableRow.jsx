@@ -25,12 +25,22 @@ export default function TableRow({
     }
     return isEven ? "bg-white" : "bg-[#FAFAFA]"; // Màu mặc định
   };
+  const getPX = () => {
+    if (
+      row.status === "waiting" ||
+      row.status === "completed" ||
+      row.status === "dispensed"
+    ) {
+      return "px-1";
+    }
+    return "px-4";
+  };
   return (
     <tr className={`border-b border-[#EEEEEE] text-sm ${getRowBackground()}`}>
       {columns.map((col, colIndex) => (
         <td
           key={colIndex}
-          className={`px-4 py-4 ${
+          className={`${getPX()} py-4 ${
             col.align === "center" ? "text-center" : "text-left"
           }`}
         >

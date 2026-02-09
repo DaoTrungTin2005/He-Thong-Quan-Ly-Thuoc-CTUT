@@ -4,9 +4,9 @@ import { Eye, EyeOff } from "lucide-react";
 export default function FormAccount({ title }) {
   const [show, setShow] = useState(false);
   return (
-    <div className="w-1/2 bg-white h-3/5 rounded-2xl shadow-xl left-125 flex flex-col items-center justify-center absolute top-20">
+    <div className="w-1/2 bg-white h-2/5 rounded-2xl shadow-xl left-145 flex flex-col items-center justify-center absolute top-20">
       <h2 className="text-center text-xl font-bold">{title}</h2>
-      <form className="flex w-2/3 px-8 flex-col gap-5 items-center justify-center mt-5 font-bold text-white text-sm">
+      <form className="flex w-2/3 px-8 flex-col gap-3 items-center justify-center mt-5 font-bold text-white text-sm">
         <label className="flex w-full items-center gap-2 border border-[#264580] hover:ring-2 hover:ring-blue-500">
           <span className="bg-[#264580] p-2">Tên người dùng:</span>
           <input

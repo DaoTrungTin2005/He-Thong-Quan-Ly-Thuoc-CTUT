@@ -11,6 +11,8 @@ import MedicineExport from "../pages/MedicineExport.jsx";
 import CreateMedicine from "../pages/CreateMedicine.jsx";
 import UpdateMedicine from "../pages/UpdateMedicine.jsx";
 import MedicineReport from "../pages/MedicineReport.jsx";
+import Prescription from "../pages/Prescription.jsx";
+import CreatePrescription from "../pages/CreatePrescription.jsx";
 
 export default function AppRouter() {
   return (
@@ -64,6 +66,16 @@ export default function AppRouter() {
           element={<MainLayout hideHeader={false} title="Quản Lí Thuốc" />}
         >
           <Route path="/medicine/report" element={<MedicineReport />} />
+        </Route>
+        <Route
+          element={<MainLayout hideHeader={true} title="Quản Lí Đơn Thuốc" />}
+        >
+          <Route path="/prescription" element={<Prescription />} />
+        </Route>
+        <Route
+          element={<MainLayout hideHeader={false} title="Quản Lí Đơn Thuốc" />}
+        >
+          <Route path="/prescription/create" element={<CreatePrescription />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

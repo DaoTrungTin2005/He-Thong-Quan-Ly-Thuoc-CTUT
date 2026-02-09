@@ -26,6 +26,18 @@ export default function TableStatus({ status }) {
       text: "text-[#49C10C]",
       label: "Nhập",
     },
+    waiting: {
+      label: "Chờ thuốc",
+      color: "text-[#10718E]",
+    },
+    completed: {
+      label: "Đã hoàn thuốc",
+      color: "text-[#8E1010]",
+    },
+    dispensed: {
+      label: "Đã cấp thuốc",
+      color: "text-[#3D8E10]",
+    },
   };
 
   const config = statusConfig[status] || statusConfig.inactive;
@@ -39,6 +51,13 @@ export default function TableStatus({ status }) {
       )}
       {(status === "imp" || status === "exp") && (
         <span className={`py-1 text-xs font-bold ${config.text} `}>
+          {config.label}
+        </span>
+      )}
+      {(status === "waiting" ||
+        status === "completed" ||
+        status === "dispensed") && (
+        <span className={`py-1 text-xs font-bold ${config.color} `}>
           {config.label}
         </span>
       )}
