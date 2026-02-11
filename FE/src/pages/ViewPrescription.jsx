@@ -4,7 +4,7 @@ export default function ViewPrescription() {
   const data = {
     // Thông tin cán bộ y tế
     doctorName: "Lê Thành Đạt",
-    shift: "sáng 12/01/2026",
+    shift: "Sáng 12/01/2026",
     startTime: "14:15 | 12/01/2026",
 
     // Thông tin bệnh nhân

@@ -23,7 +23,7 @@ export default function FormChangePass({
 
   return (
     <>
-      <div className="w-130 bg-gradient-to-b from-[#284781] to-white absolute left-85 top-22 h-140 rounded-2xl shadow-xl">
+      <div className="w-130 bg-gradient-to-b from-[#284781] to-white absolute left-115 top-22 h-140 rounded-2xl shadow-xl">
         <div className="flex flex-col px-5 py-2 justify-center text-white text-xs">
           <div onClick={onClose} className="cursor-pointer">
             <BackIcon />

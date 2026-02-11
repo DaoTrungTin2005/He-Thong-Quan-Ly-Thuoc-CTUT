@@ -54,7 +54,7 @@ export default function Prescription() {
           KÊ ĐƠN THUỐC
         </Button>
         <div className="overflow-y-auto max-h-[500px] p-5">
-          <Table columns={columns} data={data} />
+          <Table columns={columns} data={data} type="prescription" />
         </div>
       </div>
     </>

@@ -5,6 +5,7 @@ export default function TableRow({
   row,
   columns,
   index,
+  type,
   onEdit,
   onResetPassword,
   onLock,
@@ -12,19 +13,21 @@ export default function TableRow({
   onUpdate,
   onAdd,
   onRemove,
+  onLockMedicine,
+  onUnlockMedicine,
 }) {
   const isEven = index % 2 === 0;
 
-  // Xác định màu nền dựa trên status
   const getRowBackground = () => {
     if (row.status === "success") {
-      return "bg-[#E8F5E9] font-bold"; // Màu xanh lá nhạt cho success
+      return "bg-[#E8F5E9] font-bold";
     }
     if (row.status === "failed") {
-      return "bg-[#FFEBEE] font-bold"; // Màu đỏ nhạt cho failed
+      return "bg-[#FFEBEE] font-bold";
     }
-    return isEven ? "bg-white" : "bg-[#FAFAFA]"; // Màu mặc định
+    return isEven ? "bg-white" : "bg-[#FAFAFA]";
   };
+
   const getPX = () => {
     if (
       row.status === "waiting" ||
@@ -35,6 +38,7 @@ export default function TableRow({
     }
     return "px-4";
   };
+
   return (
     <tr className={`border-b border-[#EEEEEE] text-sm ${getRowBackground()}`}>
       {columns.map((col, colIndex) => (
@@ -49,6 +53,7 @@ export default function TableRow({
           ) : col.key === "action" ? (
             <TableAction
               rowData={row}
+              type={type}
               onEdit={onEdit}
               onResetPassword={onResetPassword}
               onLock={onLock}
@@ -56,6 +61,8 @@ export default function TableRow({
               onUpdate={onUpdate}
               onAdd={onAdd}
               onRemove={onRemove}
+              onLockMedicine={onLockMedicine}
+              onUnlockMedicine={onUnlockMedicine}
             />
           ) : (
             <span>{row[col.key]}</span>

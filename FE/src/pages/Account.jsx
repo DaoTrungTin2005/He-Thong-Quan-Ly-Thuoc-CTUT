@@ -131,6 +131,7 @@ export default function Account() {
         <Table
           columns={columns}
           data={data}
+          type="account"
           onEdit={handleEdit}
           onResetPassword={handleResetPassword}
           onLock={handleLock}

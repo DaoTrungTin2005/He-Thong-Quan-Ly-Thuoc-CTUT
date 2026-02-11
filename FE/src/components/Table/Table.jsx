@@ -4,6 +4,7 @@ import TableRow from "./TableRow/TableRow.jsx";
 export default function Table({
   columns,
   data,
+  type,
   onEdit,
   onResetPassword,
   onLock,
@@ -11,6 +12,8 @@ export default function Table({
   onUpdate,
   onAdd,
   onRemove,
+  onLockMedicine,
+  onUnlockMedicine,
 }) {
   return (
     <table className="w-full border-collapse">
@@ -25,6 +28,7 @@ export default function Table({
             row={row}
             columns={columns}
             index={index}
+            type={type}
             onEdit={onEdit}
             onResetPassword={onResetPassword}
             onLock={onLock}
@@ -32,6 +36,8 @@ export default function Table({
             onUpdate={onUpdate}
             onAdd={onAdd}
             onRemove={onRemove}
+            onLockMedicine={onLockMedicine}
+            onUnlockMedicine={onUnlockMedicine}
           />
         ))}
       </tbody>

@@ -44,6 +44,7 @@ export default function Medicine() {
   ];
   const [show, setShow] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+
   return (
     <>
       <div className="w-3/4 bg-white absolute top-20 left-105 h-5/6 rounded-2xl shadow-xl">
@@ -60,6 +61,7 @@ export default function Medicine() {
         </Button>
         <div className="overflow-y-auto max-h-[500px] p-5">
           <Table
+            type="medicine"
             columns={columns}
             data={data}
             onAdd={() => setShow(true)}
@@ -68,7 +70,7 @@ export default function Medicine() {
         </div>
       </div>
       {show && (
-        <div className="w-200 bg-white absolute top-60 left-175 h-1/2 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-10">
+        <div className="w-200 bg-white absolute top-60 left-185 h-1/2 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-10">
           <h1 className="text-black text-center font-bold text-2xl pt-5 pb-3 w-full">
             NHẬP THUỐC
           </h1>

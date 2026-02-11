@@ -91,7 +91,7 @@ export default function Personal() {
           LỊCH SỬ ĐĂNG NHẬP
         </h1>
         <div className="overflow-y-auto max-h-[400px] p-5">
-          <Table columns={columns} data={data} />
+          <Table columns={columns} data={data} type="personal" />
         </div>
       </div>
       <FormChangePass
