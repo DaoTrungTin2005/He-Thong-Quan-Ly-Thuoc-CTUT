@@ -23,7 +23,7 @@ public class StatusAccount {
     private long statusAccountId;
 
     @Column(nullable = false, unique = true, name = "trang_thai_tai_khoan")
-    private String statusAccount;
+    private String nameStatusAccount;
 
     @OneToMany(mappedBy = "statusAccount")
     private List<Account> accounts;

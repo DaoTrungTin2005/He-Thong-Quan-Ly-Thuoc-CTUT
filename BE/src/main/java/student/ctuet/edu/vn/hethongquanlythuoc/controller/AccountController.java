@@ -33,7 +33,7 @@ public class AccountController {
                 account.getUsername(),
                 account.getEmail(),
                 account.getRole().getRoleName(),
-                account.getStatusAccount().getStatusAccount(),
+                account.getStatusAccount().getNameStatusAccount(),
                 account.getCreatedAt(),
                 account.getUpdatedAt());
 
