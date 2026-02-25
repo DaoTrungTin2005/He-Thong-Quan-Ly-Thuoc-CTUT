@@ -42,7 +42,7 @@ export default function MedicineExport() {
         </div>
       </div>
       <h1 className="text-black text-center font-bold text-2xl pt-5 pb-3">
-        DANH SÁCH TÀI KHOẢN
+        TRUY XUẤT
       </h1>
       <FillTime />
       <div className="w-2/3 mx-auto">

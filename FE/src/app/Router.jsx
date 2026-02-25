@@ -15,6 +15,7 @@ import Prescription from "../pages/Prescription.jsx";
 import CreatePrescription from "../pages/CreatePrescription.jsx";
 import ViewPrescription from "../pages/ViewPrescription.jsx";
 import Student from "../pages/Student.jsx";
+import Notification from "../pages/Notification.jsx";
 
 export default function AppRouter() {
   return (
@@ -90,6 +91,9 @@ export default function AppRouter() {
           }
         >
           <Route path="/student" element={<Student />} />
+        </Route>
+        <Route element={<MainLayout hideHeader={false} title="Thông báo" />}>
+          <Route path="/notification" element={<Notification />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
