@@ -63,7 +63,10 @@ export default function Personal() {
             </div>
             <div className="flex items-center justify-center text-[10px] mr-15">
               <img src={avatarsmall} alt="Avatar Small" />
-              <p className="text-black">Tên đăng nhập:Tindao2311</p>
+              <label>
+                <p className="text-black">Tên đăng nhập:Tindao2311</p>
+                <p className="text-black">Email: tindao@gmail.com</p>
+              </label>
             </div>
           </div>
         </div>

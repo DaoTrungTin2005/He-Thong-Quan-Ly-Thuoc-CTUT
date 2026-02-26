@@ -20,7 +20,7 @@ export default function MainLayout({
             />
           </div>
           <SideBar />
-          <Button className="bottom-[10%] bg-[#951010] text-white hover:scale-105 transition-transform absolute left-[30%]">
+          <Button className="bottom-[10%] bg-[#951010] text-white hover:scale-105 transition-transform absolute left-[30%] font-bold">
             ĐĂNG XUẤT
           </Button>
         </div>
