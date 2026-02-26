@@ -3,7 +3,7 @@ package student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record CreateAccountRequest(
+public record UpdateAccountRequest(
 
         @NotBlank(message = "Tên người dùng không được để trống") String fullname,
 
@@ -11,9 +11,6 @@ public record CreateAccountRequest(
 
         @NotBlank(message = "Tên đăng nhập không được để trống") String username,
 
-        @NotBlank(message = "Mật khẩu không được để trống") String password,
-
         @NotBlank(message = "Vai trò không được để trống") String role
-
 ) {
 }

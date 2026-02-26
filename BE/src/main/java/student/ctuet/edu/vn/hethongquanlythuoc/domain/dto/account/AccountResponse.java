@@ -2,7 +2,7 @@ package student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account;
 
 import java.time.Instant;
 
-public record CreateAccountResponse(
+public record AccountResponse(
         long id,
         String fullname,
         String username,

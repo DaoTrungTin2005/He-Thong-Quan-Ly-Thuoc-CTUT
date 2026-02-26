@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Account;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.CreateAccountRequest;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.UpdateAccountRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.AppException;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.ErrorCode;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.AccountRepository;
@@ -26,6 +27,7 @@ public class AccountService {
         this.statusAccountRepository = statusAccountRepository;
     }
 
+    // ========================= CREATE ========================
     public Account createAccount(CreateAccountRequest request) {
         if (accountRepository.existsByUsername(request.username())) {
             throw new AppException(ErrorCode.USERNAME_EXISTED);
@@ -48,6 +50,32 @@ public class AccountService {
         var status = statusAccountRepository.findById(1)
                 .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
         account.setStatusAccount(status);
+
+        return accountRepository.save(account);
+    }
+
+    // ========================= UPDATE ========================
+    public Account updateAccount(long id, UpdateAccountRequest request) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        if (!account.getUsername().equals(request.username()) &&
+                accountRepository.existsByUsername(request.username())) {
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+        }
+
+        if (!account.getEmail().equals(request.email()) &&
+                accountRepository.existsByEmail(request.email())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+
+        account.setUsername(request.username());
+        account.setFullname(request.fullname());
+        account.setEmail(request.email());
+
+        var role = roleResitory.findByRoleName(request.role())
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        account.setRole(role);
 
         return accountRepository.save(account);
     }
