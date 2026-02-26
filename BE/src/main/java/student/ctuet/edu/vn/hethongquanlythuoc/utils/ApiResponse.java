@@ -7,31 +7,33 @@ import java.time.LocalDateTime;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
-    private final String status;
+    private final ResponseStatus status;
     private final String message;
+    private final String errorCode;
     private final T data;
     private final LocalDateTime timestamp;
 
-    private ApiResponse(String status, String message, T data) {
+    private ApiResponse(ResponseStatus status, String message, String errorCode, T data) {
         this.status = status; // success / error
         this.message = message;
+        this.errorCode = errorCode;
         this.data = data;
         this.timestamp = LocalDateTime.now();
     }
 
     public static <T> ApiResponse<T> success(String message, T data) {
-        return new ApiResponse<>("success", message, data);
+        return new ApiResponse<>(ResponseStatus.SUCCESS, message, null, data);
     }
 
     public static <T> ApiResponse<T> success(String message) {
-        return new ApiResponse<>("success", message, null);
+        return new ApiResponse<>(ResponseStatus.SUCCESS, message, null, null);
     }
 
-    public static <T> ApiResponse<T> error(String message, T data) {
-        return new ApiResponse<>("error", message, data);
+    public static <T> ApiResponse<T> error(String message, String errorCode, T data) {
+        return new ApiResponse<>(ResponseStatus.ERROR, message, errorCode, data);
     }
 
-    public static <T> ApiResponse<T> error(String message) {
-        return new ApiResponse<>("error", message, null);
+    public static <T> ApiResponse<T> error(String message, String errorCode) {
+        return new ApiResponse<>(ResponseStatus.ERROR, message, errorCode, null);
     }
 }
