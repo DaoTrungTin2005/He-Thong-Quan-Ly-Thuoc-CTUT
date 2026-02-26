@@ -80,4 +80,10 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+    // ========================GET ACCOUNT=========================
+    public Account getAccountById(long id) {
+        return accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+    }
+
 }

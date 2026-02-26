@@ -43,6 +43,10 @@ public class SecurityConfig {
                                 HttpMethod.PUT, "/api/v1/accounts/{id}")
                         .permitAll()
 
+                        .requestMatchers(
+                                HttpMethod.GET, "/api/v1/accounts/{id}")
+                        .permitAll()
+
                         .anyRequest().authenticated());
 
         return http.build();
