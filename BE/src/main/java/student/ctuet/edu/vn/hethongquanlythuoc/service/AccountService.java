@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Account;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.CreateAccountRequest;
+import student.ctuet.edu.vn.hethongquanlythuoc.exception.AppException;
+import student.ctuet.edu.vn.hethongquanlythuoc.exception.ErrorCode;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.AccountRepository;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.RoleResitory;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.StatusAccountRepository;
@@ -26,11 +28,11 @@ public class AccountService {
 
     public Account createAccount(CreateAccountRequest request) {
         if (accountRepository.existsByUsername(request.username())) {
-            throw new RuntimeException("Tên đăng nhập đã tồn tại");
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
 
         if (accountRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("Email đã tồn tại");
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
         Account account = new Account();
@@ -40,11 +42,11 @@ public class AccountService {
         account.setPassword(passwordEncoder.encode(request.password()));
 
         var role = roleResitory.findByRoleName(request.role())
-                .orElseThrow(() -> new RuntimeException("Vai trò không tồn tại"));
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         account.setRole(role);
 
         var status = statusAccountRepository.findById(1)
-                .orElseThrow(() -> new RuntimeException("Trạng thái tài khoản không tồn tại"));
+                .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
         account.setStatusAccount(status);
 
         return accountRepository.save(account);
