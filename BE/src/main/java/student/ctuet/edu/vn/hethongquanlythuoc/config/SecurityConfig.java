@@ -47,6 +47,14 @@ public class SecurityConfig {
                                 HttpMethod.GET, "/api/v1/accounts/{id}")
                         .permitAll()
 
+                        .requestMatchers(
+                                HttpMethod.PATCH, "/api/v1/accounts/{id}/lock")
+                        .permitAll()
+
+                        .requestMatchers(
+                                HttpMethod.PATCH, "/api/v1/accounts/{id}/unlock")
+                        .permitAll()
+
                         .anyRequest().authenticated());
 
         return http.build();

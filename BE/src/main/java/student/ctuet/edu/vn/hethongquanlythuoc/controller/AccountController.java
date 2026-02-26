@@ -3,6 +3,7 @@ package student.ctuet.edu.vn.hethongquanlythuoc.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -82,5 +83,35 @@ public class AccountController {
                 account.getUpdatedAt());
 
         return ResponseEntity.ok(ApiResponse.success("Lấy thông tin tài khoản thành công", response));
+    }
+
+    @PatchMapping("/{id}/lock")
+    public ResponseEntity<ApiResponse<AccountResponse>> lockAccount(@PathVariable long id) {
+        Account account = accountService.lockAccount(id);
+        AccountResponse response = new AccountResponse(
+                account.getId(),
+                account.getFullname(),
+                account.getUsername(),
+                account.getEmail(),
+                account.getRole().getRoleName(),
+                account.getStatusAccount().getNameStatusAccount(),
+                account.getCreatedAt(),
+                account.getUpdatedAt());
+        return ResponseEntity.ok(ApiResponse.success("Khóa tài khoản thành công", response));
+    }
+
+    @PatchMapping("/{id}/unlock")
+    public ResponseEntity<ApiResponse<AccountResponse>> unlockAccount(@PathVariable long id) {
+        Account account = accountService.unlockAccount(id);
+        AccountResponse response = new AccountResponse(
+                account.getId(),
+                account.getFullname(),
+                account.getUsername(),
+                account.getEmail(),
+                account.getRole().getRoleName(),
+                account.getStatusAccount().getNameStatusAccount(),
+                account.getCreatedAt(),
+                account.getUpdatedAt());
+        return ResponseEntity.ok(ApiResponse.success("Mở khóa tài khoản thành công", response));
     }
 }

@@ -86,4 +86,28 @@ public class AccountService {
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
     }
 
+    // ========================= LOCK ACCOUNT =========================
+    public Account lockAccount(long id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        var lockedStatus = statusAccountRepository.findById(2) 
+                .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
+
+        account.setStatusAccount(lockedStatus);
+        return accountRepository.save(account);
+    }
+
+    // ========================= UNLOCK ACCOUNT =========================
+    public Account unlockAccount(long id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        var activeStatus = statusAccountRepository.findById(1) 
+                .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
+
+        account.setStatusAccount(activeStatus);
+        return accountRepository.save(account);
+    }
+
 }
