@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Account;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.ChangePasswordRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.CreateAccountRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.UpdateAccountRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.AppException;
@@ -91,7 +92,7 @@ public class AccountService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        var lockedStatus = statusAccountRepository.findById(2) 
+        var lockedStatus = statusAccountRepository.findById(2)
                 .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
 
         account.setStatusAccount(lockedStatus);
@@ -103,10 +104,23 @@ public class AccountService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        var activeStatus = statusAccountRepository.findById(1) 
+        var activeStatus = statusAccountRepository.findById(1)
                 .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
 
         account.setStatusAccount(activeStatus);
+        return accountRepository.save(account);
+    }
+
+    // ========================= CHANGE PASSWORD =========================
+    public Account changePassword(long id, ChangePasswordRequest request) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        if (!request.newPassword().equals(request.confirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        account.setPassword(passwordEncoder.encode(request.newPassword()));
         return accountRepository.save(account);
     }
 

@@ -9,6 +9,7 @@ public enum ErrorCode {
     USERNAME_EXISTED(HttpStatus.BAD_REQUEST, "Tên đăng nhập đã tồn tại"),
     EMAIL_EXISTED(HttpStatus.BAD_REQUEST, "Email đã tồn tại"),
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "Tài khoản không tồn tại"),
+    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "Mật khẩu xác nhận không khớp"),
 
     // Role
     ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "Vai trò không tồn tại"),

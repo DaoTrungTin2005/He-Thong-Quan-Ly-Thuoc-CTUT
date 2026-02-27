@@ -55,6 +55,10 @@ public class SecurityConfig {
                                 HttpMethod.PATCH, "/api/v1/accounts/{id}/unlock")
                         .permitAll()
 
+                        .requestMatchers(
+                                HttpMethod.PUT, "/api/v1/accounts/{id}/change-password")
+                        .permitAll()
+
                         .anyRequest().authenticated());
 
         return http.build();
