@@ -1,5 +1,8 @@
 package student.ctuet.edu.vn.hethongquanlythuoc.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,7 @@ import student.ctuet.edu.vn.hethongquanlythuoc.exception.ErrorCode;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.AccountRepository;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.RoleResitory;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.StatusAccountRepository;
+import student.ctuet.edu.vn.hethongquanlythuoc.specification.AccountSpecification;
 
 @Service
 public class AccountService {
@@ -122,6 +126,16 @@ public class AccountService {
 
         account.setPassword(passwordEncoder.encode(request.newPassword()));
         return accountRepository.save(account);
+    }
+
+    // ========================= GET ALL + SEARCH + PAGING =========================
+    public Page<Account> getAccounts(String keyword, String role, String status, Pageable pageable) {
+        Specification<Account> spec = Specification.allOf(
+                AccountSpecification.hasKeyword(keyword),
+                AccountSpecification.hasRole(role),
+                AccountSpecification.hasStatus(status));
+
+        return accountRepository.findAll(spec, pageable);
     }
 
 }
