@@ -1,0 +1,41 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "HeThongQuanLyThuocCtutApplication",
+            "request": "launch",
+            "mainClass": "student.ctuet.edu.vn.hethongquanlythuoc.HeThongQuanLyThuocCtutApplication",
+            "projectName": "BE"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-PharmacymanagementApplication<pharmacy-management-BE>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "student.ctuet.edu.vn.pharmacy_management.PharmacymanagementApplication",
+            "projectName": "pharmacy-management-BE",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-PharmacymanagementApplication<pharmacy-management-BE>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "student.ctuet.edu.vn.PharmacymanagementApplication",
+            "projectName": "pharmacy-management-BE",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-HeThongQuanLyThuocCtutApplication<he-thong-quan-ly-thuoc-BE>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "student.ctuet.edu.vn.hethongquanlythuoc.HeThongQuanLyThuocCtutApplication",
+            "projectName": "he-thong-quan-ly-thuoc-BE",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
