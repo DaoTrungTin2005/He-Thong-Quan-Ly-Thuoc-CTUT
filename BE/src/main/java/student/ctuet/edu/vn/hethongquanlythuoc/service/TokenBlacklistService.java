@@ -22,7 +22,6 @@ public class TokenBlacklistService {
                 TimeUnit.MILLISECONDS);
     }
 
-    // Kiểm tra token có trong blacklist không
     public boolean isBlacklisted(String jti) {
         return Boolean.TRUE.equals(redisTemplate.hasKey("blacklist:" + jti));
     }
