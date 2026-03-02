@@ -44,7 +44,7 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
 
@@ -66,7 +66,7 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
 
@@ -84,7 +84,7 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
 
@@ -100,7 +100,7 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
                 return ResponseEntity.ok(ApiResponse.success("Khóa tài khoản thành công", response));
@@ -115,7 +115,7 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
                 return ResponseEntity.ok(ApiResponse.success("Mở khóa tài khoản thành công", response));
@@ -131,7 +131,7 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
                 return ResponseEntity.ok(ApiResponse.success("Đổi mật khẩu thành công", response));
@@ -159,7 +159,7 @@ public class AccountController {
                                                 account.getUsername(),
                                                 account.getEmail(),
                                                 account.getRole().getRoleName(),
-                                                account.getStatusAccount().getNameStatusAccount(),
+                                                account.getStatusAccount().getStatusAccountName(),
                                                 account.getCreatedAt(),
                                                 account.getUpdatedAt()));
 

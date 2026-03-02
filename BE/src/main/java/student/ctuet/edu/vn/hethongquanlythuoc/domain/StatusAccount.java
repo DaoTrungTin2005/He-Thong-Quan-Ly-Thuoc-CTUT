@@ -20,10 +20,10 @@ public class StatusAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_trang_thai_tai_khoan")
-    private long statusAccountId;
+    private long id;
 
     @Column(nullable = false, unique = true, name = "trang_thai_tai_khoan")
-    private String nameStatusAccount;
+    private String statusAccountName;
 
     @OneToMany(mappedBy = "statusAccount")
     private List<Account> accounts;
