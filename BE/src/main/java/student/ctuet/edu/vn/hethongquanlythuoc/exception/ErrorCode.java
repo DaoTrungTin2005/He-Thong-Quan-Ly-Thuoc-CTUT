@@ -17,6 +17,11 @@ public enum ErrorCode {
     // Status
     STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "Trạng thái tài khoản không tồn tại"),
 
+    // Auth
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "Tên đăng nhập hoặc mật khẩu không đúng"),
+    ACCOUNT_LOCKED(HttpStatus.FORBIDDEN, "Tài khoản đã bị khóa"),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token không hợp lệ hoặc đã hết hạn"),
+
     //Validation
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Dữ liệu không hợp lệ"),
 
