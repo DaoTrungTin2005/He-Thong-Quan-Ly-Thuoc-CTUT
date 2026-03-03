@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +34,8 @@ public class AccountController {
                 this.accountService = accountService;
         }
 
-        @PostMapping // Create Account
+        @PostMapping
+        @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<ApiResponse<AccountResponse>> createAccount(
                         @Valid @RequestBody CreateAccountRequest request) {
                 Account account = accountService.createAccount(request);
@@ -44,7 +46,7 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
 
@@ -55,6 +57,7 @@ public class AccountController {
         }
 
         @PutMapping("/{id}")
+        @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<ApiResponse<AccountResponse>> updateAccount(
                         @PathVariable long id,
                         @Valid @RequestBody UpdateAccountRequest request) {
@@ -66,7 +69,7 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
 
@@ -75,6 +78,7 @@ public class AccountController {
         }
 
         @GetMapping("/{id}")
+        @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<ApiResponse<AccountResponse>> getAccount(@PathVariable long id) {
                 Account account = accountService.getAccountById(id);
 
@@ -84,7 +88,7 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
 
@@ -92,6 +96,7 @@ public class AccountController {
         }
 
         @PatchMapping("/{id}/lock")
+        @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<ApiResponse<AccountResponse>> lockAccount(@PathVariable long id) {
                 Account account = accountService.lockAccount(id);
                 AccountResponse response = new AccountResponse(
@@ -100,13 +105,14 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
                 return ResponseEntity.ok(ApiResponse.success("Khóa tài khoản thành công", response));
         }
 
         @PatchMapping("/{id}/unlock")
+        @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<ApiResponse<AccountResponse>> unlockAccount(@PathVariable long id) {
                 Account account = accountService.unlockAccount(id);
                 AccountResponse response = new AccountResponse(
@@ -115,13 +121,14 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
                 return ResponseEntity.ok(ApiResponse.success("Mở khóa tài khoản thành công", response));
         }
 
         @PutMapping("/{id}/change-password")
+        @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<ApiResponse<AccountResponse>> changePassword(
                         @PathVariable long id, @Valid @RequestBody ChangePasswordRequest request) {
                 Account account = accountService.changePassword(id, request);
@@ -131,13 +138,14 @@ public class AccountController {
                                 account.getUsername(),
                                 account.getEmail(),
                                 account.getRole().getRoleName(),
-                                account.getStatusAccount().getNameStatusAccount(),
+                                account.getStatusAccount().getStatusAccountName(),
                                 account.getCreatedAt(),
                                 account.getUpdatedAt());
                 return ResponseEntity.ok(ApiResponse.success("Đổi mật khẩu thành công", response));
         }
 
         @GetMapping
+        @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<ApiResponse<Page<AccountResponse>>> getAccounts(
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
@@ -159,7 +167,7 @@ public class AccountController {
                                                 account.getUsername(),
                                                 account.getEmail(),
                                                 account.getRole().getRoleName(),
-                                                account.getStatusAccount().getNameStatusAccount(),
+                                                account.getStatusAccount().getStatusAccountName(),
                                                 account.getCreatedAt(),
                                                 account.getUpdatedAt()));
 

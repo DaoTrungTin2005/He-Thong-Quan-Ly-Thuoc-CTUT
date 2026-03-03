@@ -1,5 +1,7 @@
 package student.ctuet.edu.vn.hethongquanlythuoc.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -11,4 +13,7 @@ public interface AccountRepository extends JpaRepository<Account, Long>,JpaSpeci
 
     boolean existsByEmail(String email);
 
+    Optional<Account> findByUsernameOrEmail(String username, String email);
+
+    Optional<Account> findByUsername(String username);
 }

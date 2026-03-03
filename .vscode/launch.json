@@ -5,7 +5,8 @@
             "name": "HeThongQuanLyThuocCtutApplication",
             "request": "launch",
             "mainClass": "student.ctuet.edu.vn.hethongquanlythuoc.HeThongQuanLyThuocCtutApplication",
-            "projectName": "BE"
+            "projectName": "BE",
+            "envFile": "${workspaceFolder}/.env"
         },
         {
             "type": "java",
