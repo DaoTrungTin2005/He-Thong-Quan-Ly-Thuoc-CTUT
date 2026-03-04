@@ -15,7 +15,7 @@ public class MedicineHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_lich_su")
-    private Long id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "ma_lo_thuoc", nullable = false)
