@@ -5,7 +5,8 @@ export default function UpdateMedicine() {
     { name: "tenThuoc", label: "Tên thuốc:", width: "full" },
     { name: "soLuong", label: "Số lượng:", width: "half" },
     { name: "donViTinh", label: "Đơn vị tính:", width: "half" },
-    { name: "hanSuDung", label: "Hạn sử dụng:", width: "full" },
+    { name: "lothuoc", label: "Lô thuốc:", width: "half" },
+    { name: "hanSuDung", label: "Hạn sử dụng:", width: "half" },
   ];
   return (
     <div className="w-6/9 bg-white absolute top-20 left-125 h-1/2 rounded-2xl shadow-xl flex flex-col items-center justify-center gap-10">

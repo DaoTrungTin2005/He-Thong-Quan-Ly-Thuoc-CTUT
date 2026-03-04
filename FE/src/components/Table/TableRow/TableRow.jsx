@@ -6,6 +6,8 @@ export default function TableRow({
   columns,
   index,
   type,
+  selectedBatch,
+  onSelectBatch,
   onEdit,
   onResetPassword,
   onLock,
@@ -19,23 +21,14 @@ export default function TableRow({
   const isEven = index % 2 === 0;
 
   const getRowBackground = () => {
-    if (row.status === "success") {
-      return "bg-[#E8F5E9] font-bold";
-    }
-    if (row.status === "failed") {
-      return "bg-[#FFEBEE] font-bold";
-    }
+    if (row.status === "success") return "bg-[#E8F5E9] font-bold";
+    if (row.status === "failed") return "bg-[#FFEBEE] font-bold";
     return isEven ? "bg-white" : "bg-[#FAFAFA]";
   };
 
   const getPX = () => {
-    if (
-      row.status === "waiting" ||
-      row.status === "completed" ||
-      row.status === "dispensed"
-    ) {
+    if (["waiting", "completed", "dispensed"].includes(row.status))
       return "px-1";
-    }
     return "px-4";
   };
 
@@ -50,9 +43,33 @@ export default function TableRow({
         >
           {col.key === "status" ? (
             <TableStatus status={row[col.key]} />
+          ) : col.key === "quantity" && type === "medicine" ? (
+            <span>{selectedBatch?.quantity ?? "-"}</span>
+          ) : col.key === "batch" ? (
+            <select
+              className="border rounded px-2 py-0.5 text-xs"
+              value={selectedBatch?.batchId ?? ""}
+              onChange={(e) => {
+                const batch = (row.batches ?? []).find(
+                  (b) => b.batchId === e.target.value,
+                );
+                onSelectBatch?.(row.id, batch);
+              }}
+            >
+              <option value="">-- Chọn lô --</option>
+              {(row.batches ?? []).map((b) => (
+                <option key={b.batchId} value={b.batchId}>
+                  {b.batchId} | HSD: {b.expiry}
+                </option>
+              ))}
+            </select>
           ) : col.key === "action" ? (
             <TableAction
-              rowData={row}
+              rowData={
+                type === "medicine"
+                  ? { ...row, status: selectedBatch?.status ?? null } // lockedStatus vẫn có từ ...row
+                  : row
+              }
               type={type}
               onEdit={onEdit}
               onResetPassword={onResetPassword}

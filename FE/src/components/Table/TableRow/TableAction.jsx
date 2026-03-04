@@ -139,94 +139,65 @@ export default function TableAction({
 
   // TYPE: MEDICINE - Quản lý thuốc
   if (type === "medicine") {
-    if (rowData.status === "exported") {
-      return (
-        <div className="flex items-center justify-self-start gap-2">
-          <Button
-            onClick={handleAccess}
-            className="bg-[#3D8E10] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-          >
-            Truy xuất
-          </Button>
+    const isLocked = rowData.lockedStatus === "lockMedicine";
 
-          <Button
-            onClick={handleAdd}
-            className="bg-[#264580] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-          >
-            Nhập thuốc
-          </Button>
-
-          {rowData.status === "lockMedicine" ? (
-            <Button
-              onClick={handleUnlockMedicine}
-              className="bg-[#264580] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-            >
-              Mở khóa thuốc
-            </Button>
-          ) : (
-            <Button
-              onClick={handleLockMedicine}
-              className="bg-[#B51C1C] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-            >
-              Khóa thuốc
-            </Button>
-          )}
-        </div>
-      );
-    }
-
-    if (rowData.status === "lockMedicine") {
-      return (
-        <div className="flex items-center justify-self-start gap-2">
-          <Button
-            onClick={handleAccess}
-            className="bg-[#3D8E10] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-          >
-            Truy xuất
-          </Button>
+    return (
+      <div className="flex items-center justify-self-start gap-2">
+        {/* Luôn hiển thị */}
+        {isLocked ? (
           <Button
             onClick={handleUnlockMedicine}
             className="bg-[#264580] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
           >
             Mở khóa thuốc
           </Button>
-        </div>
-      );
-    }
-
-    if (rowData.status === "unexported") {
-      return (
-        <div className="flex items-center justify-self-start gap-2">
+        ) : (
           <Button
-            onClick={handleAccess}
-            className="bg-[#3D8E10] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-          >
-            Truy xuất
-          </Button>
-
-          <Button
-            onClick={handleAdd}
-            className="bg-[#264580] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-          >
-            Nhập thuốc
-          </Button>
-
-          <Button
-            onClick={handleUpdate}
-            className="bg-[#BC5B1A] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-          >
-            Cập nhật
-          </Button>
-
-          <Button
-            onClick={handleRemove}
+            onClick={handleLockMedicine}
             className="bg-[#B51C1C] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
           >
-            Xóa
+            Khóa thuốc
           </Button>
-        </div>
-      );
-    }
+        )}
+
+        {/* Chỉ hiển thị sau khi chọn lô */}
+        {rowData.status && (
+          <>
+            <Button
+              onClick={handleAccess}
+              className="bg-[#3D8E10] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
+            >
+              Truy xuất
+            </Button>
+
+            <Button
+              onClick={handleAdd}
+              className="bg-[#264580] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
+            >
+              Nhập thuốc
+            </Button>
+
+            {rowData.status === "unexported" && (
+              <>
+                <Button
+                  onClick={handleUpdate}
+                  className="bg-[#BC5B1A] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
+                >
+                  Cập nhật
+                </Button>
+
+                <Button
+                  onClick={handleRemove}
+                  className="bg-[#B51C1C] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
+                >
+                  Xóa
+                </Button>
+              </>
+            )}
+          </>
+        )}
+      </div>
+    );
   }
 
   // TYPE: PRESCRIPTION - Quản lý đơn thuốc

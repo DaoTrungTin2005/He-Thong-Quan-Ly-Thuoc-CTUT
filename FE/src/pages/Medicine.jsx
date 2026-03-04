@@ -6,34 +6,35 @@ import FormMedicine from "../components/FormMedicine";
 import Alert from "../components/Alert.jsx";
 import { useState } from "react";
 export default function Medicine() {
+  const [selectedBatches, setSelectedBatches] = useState({});
   const columns = [
     { key: "id", label: "STT", align: "center" },
     { key: "medicine", label: "TÊN THUỐC", align: "left" },
     { key: "quantity", label: "SỐ LƯỢNG", align: "left" },
     { key: "unit", label: "ĐƠN VỊ TÍNH", align: "left" },
+    { key: "batch", label: "CHỌN LÔ", align: "left" },
     { key: "action", label: "THAO TÁC", align: "left" },
   ];
   const data = [
     {
       id: 1,
-      medicine: "thuoc chuot",
-      quantity: 123,
+      medicine: "Thuốc chuột",
       unit: "bao",
-      status: "exported",
-    },
-    {
-      id: 2,
-      medicine: "thuoc chuot",
-      quantity: 123,
-      unit: "bao",
-      status: "unexported",
-    },
-    {
-      id: 3,
-      medicine: "thuoc chuot",
-      quantity: 123,
-      unit: "bao",
-      status: "lockMedicine",
+      lockedStatus: "lockMedicine", // "lockMedicine", "unlockMedicine"
+      batches: [
+        {
+          batchId: "LO001",
+          quantity: 50,
+          expiry: "2025-12",
+          status: "unexported",
+        },
+        {
+          batchId: "LO002",
+          quantity: 73,
+          expiry: "2026-06",
+          status: "exported",
+        },
+      ],
     },
   ];
   const fields = [
@@ -64,6 +65,10 @@ export default function Medicine() {
             type="medicine"
             columns={columns}
             data={data}
+            selectedBatches={selectedBatches}
+            onSelectBatch={(rowId, batch) =>
+              setSelectedBatches((prev) => ({ ...prev, [rowId]: batch }))
+            }
             onAdd={() => setShow(true)}
             onRemove={() => setShowAlert(true)}
           />
