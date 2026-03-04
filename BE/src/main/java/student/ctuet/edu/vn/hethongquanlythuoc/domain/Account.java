@@ -1,6 +1,7 @@
 package student.ctuet.edu.vn.hethongquanlythuoc.domain;
 
 import java.time.Instant;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -44,6 +46,9 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "ma_trang_thai_tai_khoan", nullable = false)
     private AccountStatus statusAccount;
+
+    @OneToMany(mappedBy = "account")
+    private List<MedicineHistory> histories;
 
     @Column(name = "thoi_diem_tao", nullable = false, updatable = false)
     private Instant createdAt;
