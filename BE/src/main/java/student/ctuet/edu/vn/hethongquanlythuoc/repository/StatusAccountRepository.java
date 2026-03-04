@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import student.ctuet.edu.vn.hethongquanlythuoc.domain.StatusAccount;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.AccountStatus;
 
-public interface StatusAccountRepository extends JpaRepository<StatusAccount, Long> {
-    Optional<StatusAccount> findById(long id);
+public interface StatusAccountRepository extends JpaRepository<AccountStatus, Long> {
+    Optional<AccountStatus> findById(long id);
 
 }

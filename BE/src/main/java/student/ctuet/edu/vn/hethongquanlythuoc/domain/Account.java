@@ -43,7 +43,7 @@ public class Account {
 
     @ManyToOne
     @JoinColumn(name = "ma_trang_thai_tai_khoan", nullable = false)
-    private StatusAccount statusAccount;
+    private AccountStatus statusAccount;
 
     @Column(name = "thoi_diem_tao", nullable = false, updatable = false)
     private Instant createdAt;
