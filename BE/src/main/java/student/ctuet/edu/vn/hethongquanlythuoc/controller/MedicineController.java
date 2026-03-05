@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.CreateMedicineRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.ImportBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.MedicineResponse;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.UpdateBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.service.MedicineService;
 import student.ctuet.edu.vn.hethongquanlythuoc.utils.ApiResponse;
 
@@ -49,5 +51,17 @@ public class MedicineController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Nhập thuốc thành công", response));
+    }
+
+    @PutMapping("/{medicineId}/batches/{batchId}")
+    public ResponseEntity<ApiResponse<MedicineResponse>> updateBatch(
+            @PathVariable long medicineId,
+            @PathVariable long batchId,
+            @Valid @RequestBody UpdateBatchRequest request) {
+
+        MedicineResponse response = medicineService.updateBatch(medicineId, batchId, request);
+
+        return ResponseEntity
+                .ok(ApiResponse.success("Cập nhật thuốc thành công", response));
     }
 }

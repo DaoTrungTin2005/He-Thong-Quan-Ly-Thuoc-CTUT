@@ -25,6 +25,10 @@ public enum ErrorCode {
     MEDICINE_NAME_EXISTED(HttpStatus.BAD_REQUEST, "Tên thuốc đã tồn tại"),
     MEDICINE_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "Trạng thái thuốc không tồn tại"),
 
+    // Batch
+    BATCH_NOT_FOUND(HttpStatus.NOT_FOUND, "Lô thuốc không tồn tại"),
+    BATCH_ALREADY_EXPORTED(HttpStatus.BAD_REQUEST, "Lô thuốc đã được xuất, không thể chỉnh sửa"),
+
     // Validation
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Dữ liệu không hợp lệ"),
 

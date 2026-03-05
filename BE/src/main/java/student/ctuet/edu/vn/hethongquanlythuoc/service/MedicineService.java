@@ -12,6 +12,7 @@ import student.ctuet.edu.vn.hethongquanlythuoc.domain.MedicineBatch;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.CreateMedicineRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.ImportBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.MedicineResponse;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.UpdateBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.AppException;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.ErrorCode;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineBatchRepository;
@@ -90,6 +91,32 @@ public class MedicineService {
         MedicineBatch batch = new MedicineBatch();
         batch.setMedicine(medicine);
         batch.setBatchNumber(batchNumber);
+        batch.setQuantity(request.quantity());
+        batch.setRemainingQuantity(request.quantity());
+        batch.setExpiryDate(request.expiryDate());
+        batchRepository.save(batch);
+
+        return maptoResponse(medicine);
+    }
+
+    // ========================= UPDATE BATCH =========================
+    @Transactional
+    public MedicineResponse updateBatch(long medicineId, long batchId, UpdateBatchRequest request) {
+
+        Medicine medicine = medicineRepository.findById(medicineId)
+                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+
+        MedicineBatch batch = batchRepository.findById(batchId)
+                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
+
+        if (batch.hasBeenExported()) {
+            throw new AppException(ErrorCode.BATCH_ALREADY_EXPORTED);
+        }
+
+        medicine.setName(request.name());
+        medicine.setUnit(request.unit());
+        medicineRepository.save(medicine);
+
         batch.setQuantity(request.quantity());
         batch.setRemainingQuantity(request.quantity());
         batch.setExpiryDate(request.expiryDate());
