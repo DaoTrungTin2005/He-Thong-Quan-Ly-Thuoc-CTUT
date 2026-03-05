@@ -125,6 +125,20 @@ public class MedicineService {
         return maptoResponse(medicine);
     }
 
+    // ========================= DELETE BATCH =========================
+    @Transactional
+    public void deleteBatch(long batchId) {
+
+        MedicineBatch batch = batchRepository.findById(batchId)
+                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
+
+        if (batch.hasBeenExported()) {
+            throw new AppException(ErrorCode.BATCH_ALREADY_EXPORTED);
+        }
+
+        batchRepository.delete(batch);
+    }
+
     // ========================= HELPER =========================
     private MedicineResponse maptoResponse(Medicine medicine) {
         List<MedicineResponse.MedicineBatch> batches = batchRepository

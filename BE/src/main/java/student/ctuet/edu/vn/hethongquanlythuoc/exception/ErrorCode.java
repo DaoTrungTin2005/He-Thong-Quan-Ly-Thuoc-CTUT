@@ -27,7 +27,7 @@ public enum ErrorCode {
 
     // Batch
     BATCH_NOT_FOUND(HttpStatus.NOT_FOUND, "Lô thuốc không tồn tại"),
-    BATCH_ALREADY_EXPORTED(HttpStatus.BAD_REQUEST, "Lô thuốc đã được xuất, không thể chỉnh sửa"),
+    BATCH_ALREADY_EXPORTED(HttpStatus.BAD_REQUEST, "Lô thuốc đã được xuất, không thể thực hiện thao tác này"),
 
     // Validation
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Dữ liệu không hợp lệ"),

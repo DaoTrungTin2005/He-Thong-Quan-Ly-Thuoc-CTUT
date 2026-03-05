@@ -3,6 +3,7 @@ package student.ctuet.edu.vn.hethongquanlythuoc.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,7 +41,7 @@ public class MedicineController {
                 .body(ApiResponse.success("Thêm thuốc mới thành công", response));
     }
 
-    @PostMapping("/{id}/batches")
+    @PostMapping("/{medicineId}/batches")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MedicineResponse>> importBatch(
             @PathVariable long id,
@@ -63,5 +64,14 @@ public class MedicineController {
 
         return ResponseEntity
                 .ok(ApiResponse.success("Cập nhật thuốc thành công", response));
+    }
+
+    @DeleteMapping("/batches/{batchId}")
+    public ResponseEntity<ApiResponse<Void>> deleteBatch(@PathVariable long batchId) {
+
+        medicineService.deleteBatch(batchId);
+
+        return ResponseEntity
+                .ok(ApiResponse.success("Xóa lô thuốc thành công", null));
     }
 }
