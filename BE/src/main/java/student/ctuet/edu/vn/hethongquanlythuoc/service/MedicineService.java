@@ -71,7 +71,7 @@ public class MedicineService {
 
         return maptoResponse(medicine);
     }
-
+    
     // ========================= IMPORT BATCH =========================
     @Transactional
     public MedicineResponse importBatch(long medicineId, ImportBatchRequest request) {
@@ -137,6 +137,36 @@ public class MedicineService {
         }
 
         batchRepository.delete(batch);
+    }
+
+    // ========================= LOCK =========================
+    @Transactional
+    public MedicineResponse lockMedicine(long medicineId) {
+        Medicine medicine = medicineRepository.findById(medicineId)
+                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+
+        var lockedStatus = medicineStatusRepository.findById(2)
+                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_STATUS_NOT_FOUND));
+
+        medicine.setStatus(lockedStatus);
+        medicineRepository.save(medicine);
+
+        return maptoResponse(medicine);
+    }
+
+    // ========================= UNLOCK =========================
+    @Transactional
+    public MedicineResponse unlockMedicine(long medicineId) {
+        Medicine medicine = medicineRepository.findById(medicineId)
+                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+
+        var activeStatus = medicineStatusRepository.findById(1)
+                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_STATUS_NOT_FOUND));
+
+        medicine.setStatus(activeStatus);
+        medicineRepository.save(medicine);
+
+        return maptoResponse(medicine);
     }
 
     // ========================= HELPER =========================

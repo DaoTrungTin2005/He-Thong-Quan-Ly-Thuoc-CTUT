@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -55,6 +56,7 @@ public class MedicineController {
     }
 
     @PutMapping("/{medicineId}/batches/{batchId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MedicineResponse>> updateBatch(
             @PathVariable long medicineId,
             @PathVariable long batchId,
@@ -67,11 +69,26 @@ public class MedicineController {
     }
 
     @DeleteMapping("/batches/{batchId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteBatch(@PathVariable long batchId) {
 
         medicineService.deleteBatch(batchId);
 
         return ResponseEntity
                 .ok(ApiResponse.success("Xóa lô thuốc thành công", null));
+    }
+
+    @PatchMapping("/{medicineId}/lock")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<MedicineResponse>> lockMedicine(@PathVariable long medicineId) {
+        MedicineResponse response = medicineService.lockMedicine(medicineId);
+        return ResponseEntity.ok(ApiResponse.success("Khóa thuốc thành công", response));
+    }
+
+    @PatchMapping("/{medicineId}/unlock")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<MedicineResponse>> unlockMedicine(@PathVariable long medicineId) {
+        MedicineResponse response = medicineService.unlockMedicine(medicineId);
+        return ResponseEntity.ok(ApiResponse.success("Mở khóa thuốc thành công", response));
     }
 }
