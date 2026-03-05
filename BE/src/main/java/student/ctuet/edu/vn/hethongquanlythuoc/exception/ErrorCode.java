@@ -21,6 +21,7 @@ public enum ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token không hợp lệ hoặc đã hết hạn"),
 
     // Medicine
+    MEDICINE_NOT_FOUND(HttpStatus.NOT_FOUND, "Thuốc không tồn tại"),
     MEDICINE_NAME_EXISTED(HttpStatus.BAD_REQUEST, "Tên thuốc đã tồn tại"),
     MEDICINE_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "Trạng thái thuốc không tồn tại"),
 

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Medicine;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.MedicineBatch;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.CreateMedicineRequest;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.ImportBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.MedicineResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.AppException;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.ErrorCode;
@@ -57,6 +58,33 @@ public class MedicineService {
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
 
         int batchCount = batchRepository.countByMedicineId(medicine.getId());
+        String batchNumber = String.format("%s-%s-%03d", prefix, date, batchCount + 1);
+
+        MedicineBatch batch = new MedicineBatch();
+        batch.setMedicine(medicine);
+        batch.setBatchNumber(batchNumber);
+        batch.setQuantity(request.quantity());
+        batch.setRemainingQuantity(request.quantity());
+        batch.setExpiryDate(request.expiryDate());
+        batchRepository.save(batch);
+
+        return maptoResponse(medicine);
+    }
+
+    // ========================= IMPORT BATCH =========================
+    @Transactional
+    public MedicineResponse importBatch(long medicineId, ImportBatchRequest request) {
+
+        Medicine medicine = medicineRepository.findById(medicineId)
+                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+
+        String prefix = medicine.getName().length() >= 3
+                ? medicine.getName().substring(0, 3).toUpperCase()
+                : medicine.getName().toUpperCase();
+
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+
+        int batchCount = batchRepository.countByMedicineId(medicineId);
         String batchNumber = String.format("%s-%s-%03d", prefix, date, batchCount + 1);
 
         MedicineBatch batch = new MedicineBatch();
