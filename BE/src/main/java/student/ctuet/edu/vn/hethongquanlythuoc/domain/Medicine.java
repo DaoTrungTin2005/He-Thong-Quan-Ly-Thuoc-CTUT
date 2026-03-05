@@ -2,10 +2,8 @@ package student.ctuet.edu.vn.hethongquanlythuoc.domain;
 
 import java.time.Instant;
 import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,7 +33,7 @@ public class Medicine {
     private String unit;
 
     @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
+    @JoinColumn(name = "ma_trang_thai_thuoc", nullable = false)
     private MedicineStatus status;
 
     @OneToMany(mappedBy = "medicine")
@@ -50,7 +48,7 @@ public class Medicine {
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
-        updatedAt = Instant.now();
+        updatedAt = Instant.now();  
     }
 
     @PreUpdate
