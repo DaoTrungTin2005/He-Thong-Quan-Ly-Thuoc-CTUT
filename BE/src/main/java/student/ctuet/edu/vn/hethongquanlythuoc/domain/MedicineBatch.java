@@ -65,4 +65,8 @@ public class MedicineBatch {
         updatedAt = Instant.now();
     }
 
+    public boolean hasBeenExported() {
+        return this.remainingQuantity < this.quantity;
+    }
+
 }
