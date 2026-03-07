@@ -24,8 +24,9 @@ import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.ImportBatchRe
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.MedicineResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.TraceResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.UpdateBatchRequest;
-import student.ctuet.edu.vn.hethongquanlythuoc.service.ExportExcelService;
+import student.ctuet.edu.vn.hethongquanlythuoc.service.ExcelExportService;
 import student.ctuet.edu.vn.hethongquanlythuoc.service.MedicineService;
+import student.ctuet.edu.vn.hethongquanlythuoc.service.PdfExportService;
 import student.ctuet.edu.vn.hethongquanlythuoc.utils.ApiResponse;
 
 @RestController
@@ -33,11 +34,13 @@ import student.ctuet.edu.vn.hethongquanlythuoc.utils.ApiResponse;
 public class MedicineController {
 
     private final MedicineService medicineService;
-    private final ExportExcelService exportExcelService;
+    private final ExcelExportService excelExportService;
+    private final PdfExportService pdfExportService;
 
-    public MedicineController(MedicineService medicineService, ExportExcelService exportExcelService) {
+    public MedicineController(MedicineService medicineService, ExcelExportService excelExportService, PdfExportService pdfExportService) {
         this.medicineService = medicineService;
-        this.exportExcelService = exportExcelService;
+        this.excelExportService = excelExportService;
+        this.pdfExportService = pdfExportService;
     }
 
     @PostMapping
@@ -132,7 +135,7 @@ public class MedicineController {
         LocalDate fromDate = (from != null) ? from : LocalDate.now().withDayOfYear(1);
         LocalDate toDate = (to != null) ? to : LocalDate.now();
 
-        byte[] file = exportExcelService.exportMedicineReport(fromDate, toDate);
+        byte[] file = excelExportService.exportMedicineReport(fromDate, toDate);
 
         String filename = "bao-cao-thuoc-" + fromDate + "-den-" + toDate + ".xlsx";
 
@@ -140,6 +143,24 @@ public class MedicineController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(
                         MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(file);
+    }
+
+    @GetMapping("/export/pdf")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<byte[]> exportPdf(
+            @RequestParam(required = false) LocalDate from,
+            @RequestParam(required = false) LocalDate to) throws Exception {
+
+        LocalDate fromDate = (from != null) ? from : LocalDate.now().withDayOfYear(1);
+        LocalDate toDate = (to != null) ? to : LocalDate.now();
+
+        byte[] file = pdfExportService.exportMedicineReport(fromDate, toDate);
+        String filename = "bao-cao-thuoc-" + fromDate + "-den-" + toDate + ".pdf";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.APPLICATION_PDF)
                 .body(file);
     }
 }
