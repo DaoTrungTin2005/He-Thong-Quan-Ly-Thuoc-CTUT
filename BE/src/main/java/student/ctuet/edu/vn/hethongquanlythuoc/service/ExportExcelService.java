@@ -28,13 +28,13 @@ import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineHistoryReposit
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineRepository;
 
 @Service
-public class ExportService {
+public class ExportExcelService {
 
         private final MedicineRepository medicineRepository;
         private final MedicineHistoryRepository historyRepository;
         private final MedicineBatchRepository batchRepository;
 
-        public ExportService(MedicineRepository medicineRepository,
+        public ExportExcelService(MedicineRepository medicineRepository,
                         MedicineHistoryRepository historyRepository,
                         MedicineBatchRepository batchRepository) {
                 this.medicineRepository = medicineRepository;

@@ -24,7 +24,7 @@ import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.ImportBatchRe
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.MedicineResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.TraceResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.UpdateBatchRequest;
-import student.ctuet.edu.vn.hethongquanlythuoc.service.ExportService;
+import student.ctuet.edu.vn.hethongquanlythuoc.service.ExportExcelService;
 import student.ctuet.edu.vn.hethongquanlythuoc.service.MedicineService;
 import student.ctuet.edu.vn.hethongquanlythuoc.utils.ApiResponse;
 
@@ -33,11 +33,11 @@ import student.ctuet.edu.vn.hethongquanlythuoc.utils.ApiResponse;
 public class MedicineController {
 
     private final MedicineService medicineService;
-    private final ExportService exportService;
+    private final ExportExcelService exportExcelService;
 
-    public MedicineController(MedicineService medicineService, ExportService exportService) {
+    public MedicineController(MedicineService medicineService, ExportExcelService exportExcelService) {
         this.medicineService = medicineService;
-        this.exportService = exportService;
+        this.exportExcelService = exportExcelService;
     }
 
     @PostMapping
@@ -123,7 +123,7 @@ public class MedicineController {
         return ResponseEntity.ok(ApiResponse.success("Truy xuất thành công", response));
     }
 
-    @GetMapping("/export")
+    @GetMapping("/export/excel")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<byte[]> exportReport(
             @RequestParam(required = false) LocalDate from,
@@ -132,7 +132,7 @@ public class MedicineController {
         LocalDate fromDate = (from != null) ? from : LocalDate.now().withDayOfYear(1);
         LocalDate toDate = (to != null) ? to : LocalDate.now();
 
-        byte[] file = exportService.exportMedicineReport(fromDate, toDate);
+        byte[] file = exportExcelService.exportMedicineReport(fromDate, toDate);
 
         String filename = "bao-cao-thuoc-" + fromDate + "-den-" + toDate + ".xlsx";
 
