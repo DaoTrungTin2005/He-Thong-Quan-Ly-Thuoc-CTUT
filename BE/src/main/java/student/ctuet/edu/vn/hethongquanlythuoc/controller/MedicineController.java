@@ -1,5 +1,7 @@
 package student.ctuet.edu.vn.hethongquanlythuoc.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,12 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.CreateMedicineRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.ImportBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.MedicineResponse;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.TraceResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.UpdateBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.service.MedicineService;
 import student.ctuet.edu.vn.hethongquanlythuoc.utils.ApiResponse;
@@ -98,5 +102,19 @@ public class MedicineController {
     public ResponseEntity<ApiResponse<MedicineResponse>> getMedicineByBatchId(@PathVariable long batchId) {
         MedicineResponse response = medicineService.getMedicineByBatchId(batchId);
         return ResponseEntity.ok(ApiResponse.success("Lấy thông tin thuốc theo lô thành công", response));
+    }
+
+    @GetMapping("/{medicineId}/trace")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<TraceResponse>> traceMedicine(
+            @PathVariable long medicineId,
+            @RequestParam(required = false) LocalDate from,
+            @RequestParam(required = false) LocalDate to) {
+
+        LocalDate fromDate = (from != null) ? from : LocalDate.now().withDayOfYear(1);
+        LocalDate toDate = (to != null) ? to : LocalDate.now();
+
+        TraceResponse response = medicineService.traceMedicine(medicineId, fromDate, toDate);
+        return ResponseEntity.ok(ApiResponse.success("Truy xuất thành công", response));
     }
 }

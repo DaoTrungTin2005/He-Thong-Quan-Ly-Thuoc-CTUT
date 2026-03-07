@@ -1,6 +1,8 @@
 package student.ctuet.edu.vn.hethongquanlythuoc.service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import student.ctuet.edu.vn.hethongquanlythuoc.domain.MedicineHistory;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.CreateMedicineRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.ImportBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.MedicineResponse;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.TraceResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.UpdateBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.AppException;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.ErrorCode;
@@ -184,6 +187,46 @@ public class MedicineService {
                 medicineRepository.save(medicine);
 
                 return maptoResponse(medicine);
+        }
+
+        // ========================= TRACE =========================
+        public TraceResponse traceMedicine(long medicineId, LocalDate from, LocalDate to) {
+
+                Medicine medicine = medicineRepository.findById(medicineId)
+                                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+
+                Instant fromInstant = from.atStartOfDay(ZoneId.systemDefault()).toInstant();
+                Instant toInstant = to.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+
+                List<MedicineHistory> histories = medicineHistoryRepository
+                                .findByMedicineIdAndDateRange(medicineId, fromInstant, toInstant);
+
+                int totalImport = histories.stream()
+                                .filter(h -> h.getType() == MedicineHistory.HistoryType.IMPORT)
+                                .mapToInt(MedicineHistory::getQuantity).sum();
+
+                int totalExport = histories.stream()
+                                .filter(h -> h.getType() == MedicineHistory.HistoryType.EXPORT)
+                                .mapToInt(MedicineHistory::getQuantity).sum();
+
+                int remaining = batchRepository.findByMedicineId(medicineId).stream()
+                                .mapToInt(MedicineBatch::getRemainingQuantity).sum();
+
+                List<TraceResponse.HistoryItem> items = histories.stream()
+                                .map(h -> new TraceResponse.HistoryItem(
+                                                h.getCreatedAt(),
+                                                h.getQuantity(),
+                                                medicine.getUnit(),
+                                                h.getType().name()))
+                                .toList();
+
+                return new TraceResponse(
+                                medicine.getName(),
+                                medicine.getUnit(),
+                                remaining,
+                                totalImport,
+                                totalExport,
+                                items);
         }
 
         // ========================= GET MEDICINE BY BATCH ID =========================
