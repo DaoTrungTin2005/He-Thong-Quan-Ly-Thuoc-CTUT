@@ -2,7 +2,9 @@ package student.ctuet.edu.vn.hethongquanlythuoc.controller;
 
 import java.time.LocalDate;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +24,7 @@ import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.ImportBatchRe
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.MedicineResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.TraceResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.UpdateBatchRequest;
+import student.ctuet.edu.vn.hethongquanlythuoc.service.ExportService;
 import student.ctuet.edu.vn.hethongquanlythuoc.service.MedicineService;
 import student.ctuet.edu.vn.hethongquanlythuoc.utils.ApiResponse;
 
@@ -30,9 +33,11 @@ import student.ctuet.edu.vn.hethongquanlythuoc.utils.ApiResponse;
 public class MedicineController {
 
     private final MedicineService medicineService;
+    private final ExportService exportService;
 
-    public MedicineController(MedicineService medicineService) {
+    public MedicineController(MedicineService medicineService, ExportService exportService) {
         this.medicineService = medicineService;
+        this.exportService = exportService;
     }
 
     @PostMapping
@@ -116,5 +121,25 @@ public class MedicineController {
 
         TraceResponse response = medicineService.traceMedicine(medicineId, fromDate, toDate);
         return ResponseEntity.ok(ApiResponse.success("Truy xuất thành công", response));
+    }
+
+    @GetMapping("/export")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<byte[]> exportReport(
+            @RequestParam(required = false) LocalDate from,
+            @RequestParam(required = false) LocalDate to) throws Exception {
+
+        LocalDate fromDate = (from != null) ? from : LocalDate.now().withDayOfYear(1);
+        LocalDate toDate = (to != null) ? to : LocalDate.now();
+
+        byte[] file = exportService.exportMedicineReport(fromDate, toDate);
+
+        String filename = "bao-cao-thuoc-" + fromDate + "-den-" + toDate + ".xlsx";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(
+                        MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(file);
     }
 }
