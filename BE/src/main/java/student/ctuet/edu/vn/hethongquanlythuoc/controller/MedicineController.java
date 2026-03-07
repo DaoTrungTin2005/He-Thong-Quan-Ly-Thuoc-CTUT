@@ -46,10 +46,10 @@ public class MedicineController {
     @PostMapping("/{medicineId}/batches")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<MedicineResponse>> importBatch(
-            @PathVariable long id,
+            @PathVariable long medicineId,
             @Valid @RequestBody ImportBatchRequest request) {
 
-        MedicineResponse response = medicineService.importBatch(id, request);
+        MedicineResponse response = medicineService.importBatch(medicineId, request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

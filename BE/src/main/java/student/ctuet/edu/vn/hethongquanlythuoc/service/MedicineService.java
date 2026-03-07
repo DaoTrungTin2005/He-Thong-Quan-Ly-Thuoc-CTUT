@@ -3,17 +3,24 @@ package student.ctuet.edu.vn.hethongquanlythuoc.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.Account;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Medicine;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.MedicineBatch;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.MedicineHistory;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.CreateMedicineRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.ImportBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.MedicineResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.UpdateBatchRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.AppException;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.ErrorCode;
+import student.ctuet.edu.vn.hethongquanlythuoc.repository.AccountRepository;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineBatchRepository;
+import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineHistoryRepository;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineRepository;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineStatusRepository;
 
@@ -23,14 +30,20 @@ public class MedicineService {
         private final MedicineRepository medicineRepository;
         private final MedicineBatchRepository batchRepository;
         private final MedicineStatusRepository medicineStatusRepository;
+        private final MedicineHistoryRepository medicineHistoryRepository;
+        private final AccountRepository accountRepository;
 
         public MedicineService(
                         MedicineRepository medicineRepository,
                         MedicineBatchRepository batchRepository,
-                        MedicineStatusRepository medicineStatusRepository) {
+                        MedicineStatusRepository medicineStatusRepository,
+                        MedicineHistoryRepository medicineHistoryRepository,
+                        AccountRepository accountRepository) {
                 this.medicineRepository = medicineRepository;
                 this.batchRepository = batchRepository;
                 this.medicineStatusRepository = medicineStatusRepository;
+                this.medicineHistoryRepository = medicineHistoryRepository;
+                this.accountRepository = accountRepository;
         }
 
         // ========================= CREATE =========================
@@ -67,6 +80,9 @@ public class MedicineService {
                 batch.setExpiryDate(request.expiryDate());
                 batchRepository.save(batch);
 
+                Account account = getCurrentAccount();
+                saveHistory(batch, account, MedicineHistory.HistoryType.IMPORT, batch.getQuantity());
+
                 return maptoResponse(medicine);
         }
 
@@ -93,6 +109,9 @@ public class MedicineService {
                 batch.setRemainingQuantity(request.quantity());
                 batch.setExpiryDate(request.expiryDate());
                 batchRepository.save(batch);
+
+                Account account = getCurrentAccount();
+                saveHistory(batch, account, MedicineHistory.HistoryType.IMPORT, batch.getQuantity());
 
                 return maptoResponse(medicine);
         }
@@ -203,5 +222,20 @@ public class MedicineService {
                                 medicine.getCreatedAt(),
                                 medicine.getUpdatedAt(),
                                 batches);
+        }
+
+        private Account getCurrentAccount() {
+                String username = SecurityContextHolder.getContext().getAuthentication().getName();
+                return accountRepository.findByUsername(username)
+                                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        }
+
+        private void saveHistory(MedicineBatch batch, Account account, MedicineHistory.HistoryType type, int quantity) {
+                MedicineHistory history = new MedicineHistory();
+                history.setBatch(batch);
+                history.setAccount(account);
+                history.setType(type);
+                history.setQuantity(quantity);
+                medicineHistoryRepository.save(history);
         }
 }
