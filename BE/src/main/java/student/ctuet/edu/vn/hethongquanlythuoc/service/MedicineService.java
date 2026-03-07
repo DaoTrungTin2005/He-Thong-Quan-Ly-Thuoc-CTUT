@@ -3,10 +3,8 @@ package student.ctuet.edu.vn.hethongquanlythuoc.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Medicine;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.MedicineBatch;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.medicine.CreateMedicineRequest;
@@ -22,181 +20,188 @@ import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineStatusReposito
 @Service
 public class MedicineService {
 
-    private final MedicineRepository medicineRepository;
-    private final MedicineBatchRepository batchRepository;
-    private final MedicineStatusRepository medicineStatusRepository;
+        private final MedicineRepository medicineRepository;
+        private final MedicineBatchRepository batchRepository;
+        private final MedicineStatusRepository medicineStatusRepository;
 
-    public MedicineService(
-            MedicineRepository medicineRepository,
-            MedicineBatchRepository batchRepository,
-            MedicineStatusRepository medicineStatusRepository) {
-        this.medicineRepository = medicineRepository;
-        this.batchRepository = batchRepository;
-        this.medicineStatusRepository = medicineStatusRepository;
-    }
-
-    // ========================= CREATE =========================
-    @Transactional
-    public MedicineResponse createMedicine(CreateMedicineRequest request) {
-
-        if (medicineRepository.existsByName(request.name())) {
-            throw new AppException(ErrorCode.MEDICINE_NAME_EXISTED);
+        public MedicineService(
+                        MedicineRepository medicineRepository,
+                        MedicineBatchRepository batchRepository,
+                        MedicineStatusRepository medicineStatusRepository) {
+                this.medicineRepository = medicineRepository;
+                this.batchRepository = batchRepository;
+                this.medicineStatusRepository = medicineStatusRepository;
         }
 
-        var status = medicineStatusRepository.findById(1)
-                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_STATUS_NOT_FOUND));
+        // ========================= CREATE =========================
+        @Transactional
+        public MedicineResponse createMedicine(CreateMedicineRequest request) {
 
-        Medicine medicine = new Medicine();
-        medicine.setName(request.name());
-        medicine.setUnit(request.unit());
-        medicine.setStatus(status);
-        medicine = medicineRepository.save(medicine);
+                if (medicineRepository.existsByName(request.name())) {
+                        throw new AppException(ErrorCode.MEDICINE_NAME_EXISTED);
+                }
 
-        String prefix = request.name().length() >= 3
-                ? request.name().substring(0, 3).toUpperCase()
-                : request.name().toUpperCase();
+                var status = medicineStatusRepository.findById(1)
+                                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_STATUS_NOT_FOUND));
 
-        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+                Medicine medicine = new Medicine();
+                medicine.setName(request.name());
+                medicine.setUnit(request.unit());
+                medicine.setStatus(status);
+                medicine = medicineRepository.save(medicine);
 
-        int batchCount = batchRepository.countByMedicineId(medicine.getId());
-        String batchNumber = String.format("%s-%s-%03d", prefix, date, batchCount + 1);
+                String prefix = request.name().length() >= 3
+                                ? request.name().substring(0, 3).toUpperCase()
+                                : request.name().toUpperCase();
 
-        MedicineBatch batch = new MedicineBatch();
-        batch.setMedicine(medicine);
-        batch.setBatchNumber(batchNumber);
-        batch.setQuantity(request.quantity());
-        batch.setRemainingQuantity(request.quantity());
-        batch.setExpiryDate(request.expiryDate());
-        batchRepository.save(batch);
+                String date = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
 
-        return maptoResponse(medicine);
-    }
-    
-    // ========================= IMPORT BATCH =========================
-    @Transactional
-    public MedicineResponse importBatch(long medicineId, ImportBatchRequest request) {
+                int batchCount = batchRepository.countByMedicineId(medicine.getId());
+                String batchNumber = String.format("%s-%s-%03d", prefix, date, batchCount + 1);
 
-        Medicine medicine = medicineRepository.findById(medicineId)
-                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+                MedicineBatch batch = new MedicineBatch();
+                batch.setMedicine(medicine);
+                batch.setBatchNumber(batchNumber);
+                batch.setQuantity(request.quantity());
+                batch.setRemainingQuantity(request.quantity());
+                batch.setExpiryDate(request.expiryDate());
+                batchRepository.save(batch);
 
-        String prefix = medicine.getName().length() >= 3
-                ? medicine.getName().substring(0, 3).toUpperCase()
-                : medicine.getName().toUpperCase();
-
-        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
-
-        int batchCount = batchRepository.countByMedicineId(medicineId);
-        String batchNumber = String.format("%s-%s-%03d", prefix, date, batchCount + 1);
-
-        MedicineBatch batch = new MedicineBatch();
-        batch.setMedicine(medicine);
-        batch.setBatchNumber(batchNumber);
-        batch.setQuantity(request.quantity());
-        batch.setRemainingQuantity(request.quantity());
-        batch.setExpiryDate(request.expiryDate());
-        batchRepository.save(batch);
-
-        return maptoResponse(medicine);
-    }
-
-    // ========================= UPDATE BATCH =========================
-    @Transactional
-    public MedicineResponse updateBatch(long medicineId, long batchId, UpdateBatchRequest request) {
-
-        Medicine medicine = medicineRepository.findById(medicineId)
-                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
-
-        MedicineBatch batch = batchRepository.findById(batchId)
-                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
-
-        if (batch.hasBeenExported()) {
-            throw new AppException(ErrorCode.BATCH_ALREADY_EXPORTED);
+                return maptoResponse(medicine);
         }
 
-        medicine.setName(request.name());
-        medicine.setUnit(request.unit());
-        medicineRepository.save(medicine);
+        // ========================= IMPORT BATCH =========================
+        @Transactional
+        public MedicineResponse importBatch(long medicineId, ImportBatchRequest request) {
 
-        batch.setQuantity(request.quantity());
-        batch.setRemainingQuantity(request.quantity());
-        batch.setExpiryDate(request.expiryDate());
-        batchRepository.save(batch);
+                Medicine medicine = medicineRepository.findById(medicineId)
+                                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
 
-        return maptoResponse(medicine);
-    }
+                String prefix = medicine.getName().length() >= 3
+                                ? medicine.getName().substring(0, 3).toUpperCase()
+                                : medicine.getName().toUpperCase();
 
-    // ========================= DELETE BATCH =========================
-    @Transactional
-    public void deleteBatch(long batchId) {
+                String date = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
 
-        MedicineBatch batch = batchRepository.findById(batchId)
-                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
+                int batchCount = batchRepository.countByMedicineId(medicineId);
+                String batchNumber = String.format("%s-%s-%03d", prefix, date, batchCount + 1);
 
-        if (batch.hasBeenExported()) {
-            throw new AppException(ErrorCode.BATCH_ALREADY_EXPORTED);
+                MedicineBatch batch = new MedicineBatch();
+                batch.setMedicine(medicine);
+                batch.setBatchNumber(batchNumber);
+                batch.setQuantity(request.quantity());
+                batch.setRemainingQuantity(request.quantity());
+                batch.setExpiryDate(request.expiryDate());
+                batchRepository.save(batch);
+
+                return maptoResponse(medicine);
         }
 
-        batchRepository.delete(batch);
-    }
+        // ========================= UPDATE BATCH =========================
+        @Transactional
+        public MedicineResponse updateBatch(long medicineId, long batchId, UpdateBatchRequest request) {
 
-    // ========================= LOCK =========================
-    @Transactional
-    public MedicineResponse lockMedicine(long medicineId) {
-        Medicine medicine = medicineRepository.findById(medicineId)
-                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+                Medicine medicine = medicineRepository.findById(medicineId)
+                                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
 
-        var lockedStatus = medicineStatusRepository.findById(2)
-                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_STATUS_NOT_FOUND));
+                MedicineBatch batch = batchRepository.findById(batchId)
+                                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
 
-        medicine.setStatus(lockedStatus);
-        medicineRepository.save(medicine);
+                if (batch.hasBeenExported()) {
+                        throw new AppException(ErrorCode.BATCH_ALREADY_EXPORTED);
+                }
 
-        return maptoResponse(medicine);
-    }
+                medicine.setName(request.name());
+                medicine.setUnit(request.unit());
+                medicineRepository.save(medicine);
 
-    // ========================= UNLOCK =========================
-    @Transactional
-    public MedicineResponse unlockMedicine(long medicineId) {
-        Medicine medicine = medicineRepository.findById(medicineId)
-                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+                batch.setQuantity(request.quantity());
+                batch.setRemainingQuantity(request.quantity());
+                batch.setExpiryDate(request.expiryDate());
+                batchRepository.save(batch);
 
-        var activeStatus = medicineStatusRepository.findById(1)
-                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_STATUS_NOT_FOUND));
+                return maptoResponse(medicine);
+        }
 
-        medicine.setStatus(activeStatus);
-        medicineRepository.save(medicine);
+        // ========================= DELETE BATCH =========================
+        @Transactional
+        public void deleteBatch(long batchId) {
 
-        return maptoResponse(medicine);
-    }
+                MedicineBatch batch = batchRepository.findById(batchId)
+                                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
 
-    // ========================= HELPER =========================
-    private MedicineResponse maptoResponse(Medicine medicine) {
-        List<MedicineResponse.MedicineBatch> batches = batchRepository
-                .findByMedicineId(medicine.getId())
-                .stream()
-                .map(b -> new MedicineResponse.MedicineBatch(
-                        b.getId(),
-                        b.getBatchNumber(),
-                        b.getQuantity(),
-                        b.getRemainingQuantity(),
-                        b.getExpiryDate(),
-                        b.getCreatedAt(),
-                        b.getUpdatedAt(),
-                        b.hasBeenExported()))
-                .toList();
+                if (batch.hasBeenExported()) {
+                        throw new AppException(ErrorCode.BATCH_ALREADY_EXPORTED);
+                }
 
-        int totalQuantity = batches.stream()
-                .mapToInt(MedicineResponse.MedicineBatch::remainingQuantity)
-                .sum();
+                batchRepository.delete(batch);
+        }
 
-        return new MedicineResponse(
-                medicine.getId(),
-                medicine.getName(),
-                medicine.getUnit(),
-                medicine.getStatus().getName(),
-                totalQuantity,
-                medicine.getCreatedAt(),
-                medicine.getUpdatedAt(),
-                batches);
-    }
+        // ========================= LOCK =========================
+        @Transactional
+        public MedicineResponse lockMedicine(long medicineId) {
+                Medicine medicine = medicineRepository.findById(medicineId)
+                                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+
+                var lockedStatus = medicineStatusRepository.findById(2)
+                                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_STATUS_NOT_FOUND));
+
+                medicine.setStatus(lockedStatus);
+                medicineRepository.save(medicine);
+
+                return maptoResponse(medicine);
+        }
+
+        // ========================= UNLOCK =========================
+        @Transactional
+        public MedicineResponse unlockMedicine(long medicineId) {
+                Medicine medicine = medicineRepository.findById(medicineId)
+                                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+
+                var activeStatus = medicineStatusRepository.findById(1)
+                                .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_STATUS_NOT_FOUND));
+
+                medicine.setStatus(activeStatus);
+                medicineRepository.save(medicine);
+
+                return maptoResponse(medicine);
+        }
+
+        // ========================= GET MEDICINE BY BATCH ID =========================
+        public MedicineResponse getMedicineByBatchId(long batchId) {
+                MedicineBatch batch = batchRepository.findById(batchId)
+                                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
+                return maptoResponse(batch.getMedicine());
+        }
+
+        // ========================= HELPER =========================
+        private MedicineResponse maptoResponse(Medicine medicine) {
+                List<MedicineResponse.MedicineBatch> batches = batchRepository
+                                .findByMedicineId(medicine.getId())
+                                .stream()
+                                .map(b -> new MedicineResponse.MedicineBatch(
+                                                b.getId(),
+                                                b.getBatchNumber(),
+                                                b.getQuantity(),
+                                                b.getRemainingQuantity(),
+                                                b.getExpiryDate(),
+                                                b.getCreatedAt(),
+                                                b.getUpdatedAt(),
+                                                b.hasBeenExported()))
+                                .toList();
+
+                int totalQuantity = batches.stream()
+                                .mapToInt(MedicineResponse.MedicineBatch::remainingQuantity)
+                                .sum();
+
+                return new MedicineResponse(
+                                medicine.getId(),
+                                medicine.getName(),
+                                medicine.getUnit(),
+                                medicine.getStatus().getName(),
+                                totalQuantity,
+                                medicine.getCreatedAt(),
+                                medicine.getUpdatedAt(),
+                                batches);
+        }
 }
