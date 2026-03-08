@@ -6,6 +6,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +29,7 @@ import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineBatchRepositor
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineHistoryRepository;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineRepository;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.MedicineStatusRepository;
+import student.ctuet.edu.vn.hethongquanlythuoc.specification.MedicineSpecification;
 
 @Service
 public class MedicineService {
@@ -234,6 +238,15 @@ public class MedicineService {
                 MedicineBatch batch = batchRepository.findById(batchId)
                                 .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
                 return maptoResponse(batch.getMedicine());
+        }
+
+        // ========================= GET ALL =========================
+        public Page<MedicineResponse> getMedicines(String keyword, String status, Pageable pageable) {
+                Specification<Medicine> spec = Specification.allOf(
+                                MedicineSpecification.hasKeyword(keyword),
+                                MedicineSpecification.hasStatus(status));
+                return medicineRepository.findAll(spec, pageable)
+                                .map(this::maptoResponse);
         }
 
         // ========================= HELPER =========================

@@ -2,6 +2,10 @@ package student.ctuet.edu.vn.hethongquanlythuoc.controller;
 
 import java.time.LocalDate;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,7 +41,8 @@ public class MedicineController {
     private final ExcelExportService excelExportService;
     private final PdfExportService pdfExportService;
 
-    public MedicineController(MedicineService medicineService, ExcelExportService excelExportService, PdfExportService pdfExportService) {
+    public MedicineController(MedicineService medicineService, ExcelExportService excelExportService,
+            PdfExportService pdfExportService) {
         this.medicineService = medicineService;
         this.excelExportService = excelExportService;
         this.pdfExportService = pdfExportService;
@@ -124,6 +129,26 @@ public class MedicineController {
 
         TraceResponse response = medicineService.traceMedicine(medicineId, fromDate, toDate);
         return ResponseEntity.ok(ApiResponse.success("Truy xuất thành công", response));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Page<MedicineResponse>>> getMedicines(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status) {
+
+        Pageable pageable = PageRequest.of(page, size,
+                sortDir.equalsIgnoreCase("desc")
+                        ? Sort.by(sortBy).descending()
+                        : Sort.by(sortBy).ascending());
+
+        return ResponseEntity.ok(ApiResponse.success(
+                "Lấy danh sách thuốc thành công",
+                medicineService.getMedicines(keyword, status, pageable)));
     }
 
     @GetMapping("/export/excel")
