@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "trang_thai_tai_khoan")
-public class StatusAccount {
+public class AccountStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ma_trang_thai_tai_khoan")

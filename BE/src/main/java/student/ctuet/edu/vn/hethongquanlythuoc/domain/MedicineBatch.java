@@ -1,6 +1,7 @@
 package student.ctuet.edu.vn.hethongquanlythuoc.domain;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -18,36 +19,33 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "lo_thuoc")
 @Getter
 @Setter
-@Table(name = "tai_khoan")
-public class Account {
+public class MedicineBatch {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ma_tai_khoan")
+    @Column(name = "ma_lo_thuoc")
     private long id;
 
-    @Column(nullable = false, unique = true, name = "ten_dang_nhap")
-    private String username;
-
-    @Column(name = "ten_nguoi_dung")
-    private String fullname;
-
-    @Column(nullable = false, name = "mat_khau")
-    private String password;
-
-    @Column(nullable = false, name = "email", unique = true)
-    private String email;
-
     @ManyToOne
-    @JoinColumn(name = "ma_vai_tro", nullable = false)
-    private Role role;
+    @JoinColumn(name = "ma_thuoc", nullable = false)
+    private Medicine medicine;
 
-    @ManyToOne
-    @JoinColumn(name = "ma_trang_thai_tai_khoan", nullable = false)
-    private AccountStatus statusAccount;
+    @Column(name = "so_lo_thuoc", nullable = false)
+    private String batchNumber;
 
-    @OneToMany(mappedBy = "account")
+    @Column(name = "so_luong", nullable = false)
+    private Integer quantity;
+
+    @Column(name = "so_luong_con_lai", nullable = false)
+    private Integer remainingQuantity;
+
+    @Column(name = "ngay_het_han", nullable = false)
+    private LocalDate expiryDate;
+
+    @OneToMany(mappedBy = "batch")
     private List<MedicineHistory> histories;
 
     @Column(name = "thoi_diem_tao", nullable = false, updatable = false)
@@ -65,6 +63,10 @@ public class Account {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = Instant.now();
+    }
+
+    public boolean hasBeenExported() {
+        return this.remainingQuantity < this.quantity;
     }
 
 }

@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Account;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.AccountResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.ChangePasswordRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.CreateAccountRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.UpdateAccountRequest;
@@ -129,13 +130,27 @@ public class AccountService {
     }
 
     // ========================= GET ALL + SEARCH + PAGING =========================
-    public Page<Account> getAccounts(String keyword, String role, String status, Pageable pageable) {
+    public Page<AccountResponse> getAccounts(String keyword, String role, String status, Pageable pageable) {
+
         Specification<Account> spec = Specification.allOf(
                 AccountSpecification.hasKeyword(keyword),
                 AccountSpecification.hasRole(role),
                 AccountSpecification.hasStatus(status));
 
-        return accountRepository.findAll(spec, pageable);
+        return accountRepository.findAll(spec, pageable)
+                .map(this::mapToResponse); // với mỗi account gọi hàm mapToResponse để chuyển thành AccountResponse
     }
 
+    // ========================= HELPER =========================
+    private AccountResponse mapToResponse(Account account) {
+        return new AccountResponse(
+                account.getId(),
+                account.getFullname(),
+                account.getUsername(),
+                account.getEmail(),
+                account.getRole().getRoleName(),
+                account.getStatusAccount().getStatusAccountName(),
+                account.getCreatedAt(),
+                account.getUpdatedAt());
+    }
 }

@@ -2,7 +2,6 @@ package student.ctuet.edu.vn.hethongquanlythuoc.domain;
 
 import java.time.Instant;
 import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,35 +19,25 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "tai_khoan")
-public class Account {
+@Table(name = "thuoc")
+public class Medicine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ma_tai_khoan")
+    @Column(name = "ma_thuoc")
     private long id;
 
-    @Column(nullable = false, unique = true, name = "ten_dang_nhap")
-    private String username;
+    @Column(name = "ten_thuoc", nullable = false, unique = true)
+    private String name;
 
-    @Column(name = "ten_nguoi_dung")
-    private String fullname;
-
-    @Column(nullable = false, name = "mat_khau")
-    private String password;
-
-    @Column(nullable = false, name = "email", unique = true)
-    private String email;
+    @Column(name = "don_vi", nullable = false)
+    private String unit;
 
     @ManyToOne
-    @JoinColumn(name = "ma_vai_tro", nullable = false)
-    private Role role;
+    @JoinColumn(name = "ma_trang_thai_thuoc", nullable = false)
+    private MedicineStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "ma_trang_thai_tai_khoan", nullable = false)
-    private AccountStatus statusAccount;
-
-    @OneToMany(mappedBy = "account")
-    private List<MedicineHistory> histories;
+    @OneToMany(mappedBy = "medicine")
+    private List<MedicineBatch> batches;
 
     @Column(name = "thoi_diem_tao", nullable = false, updatable = false)
     private Instant createdAt;
@@ -59,7 +48,7 @@ public class Account {
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
-        updatedAt = Instant.now();
+        updatedAt = Instant.now();  
     }
 
     @PreUpdate
