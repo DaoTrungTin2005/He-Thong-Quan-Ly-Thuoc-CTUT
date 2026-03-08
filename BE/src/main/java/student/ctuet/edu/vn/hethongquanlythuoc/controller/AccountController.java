@@ -160,17 +160,8 @@ public class AccountController {
                                                 ? Sort.by(sortBy).descending()
                                                 : Sort.by(sortBy).ascending());
 
-                Page<AccountResponse> response = accountService.getAccounts(keyword, role, status, pageable)
-                                .map(account -> new AccountResponse( //với mỗi account tạo ra một AccountResponse
-                                                account.getId(),
-                                                account.getFullname(),
-                                                account.getUsername(),
-                                                account.getEmail(),
-                                                account.getRole().getRoleName(),
-                                                account.getStatusAccount().getStatusAccountName(),
-                                                account.getCreatedAt(),
-                                                account.getUpdatedAt()));
-
-                return ResponseEntity.ok(ApiResponse.success("Lấy danh sách tài khoản thành công", response));
+                return ResponseEntity.ok(ApiResponse.success(
+                                "Lấy danh sách tài khoản thành công",
+                                accountService.getAccounts(keyword, role, status, pageable)));
         }
 }
