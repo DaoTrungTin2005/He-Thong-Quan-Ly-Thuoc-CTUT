@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -94,6 +93,7 @@ public class StudentService {
     }
 
     // ========================= HELPER =========================
+    //tìm đúng cột trong excel dựa vào tên cột đã cho, ròi lấy giá trị ô đó
     private String getCellString(Row row, Map<String, Integer> colIndex, String colName) {
         Integer idx = colIndex.get(colName);
         if (idx == null)
