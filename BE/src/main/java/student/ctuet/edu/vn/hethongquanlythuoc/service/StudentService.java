@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Student;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.student.StudentResponse;
+import student.ctuet.edu.vn.hethongquanlythuoc.exception.AppException;
+import student.ctuet.edu.vn.hethongquanlythuoc.exception.ErrorCode;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.StudentRepository;
 
 @Service
@@ -92,8 +94,15 @@ public class StudentService {
                 .toList();
     }
 
+    //======================== Get Student =========================
+    public StudentResponse getByStudentCode(String studentCode) {
+        Student student = studentRepository.findByStudentCode(studentCode)
+                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
+        return mapToResponse(student);
+    }
+
     // ========================= HELPER =========================
-    //tìm đúng cột trong excel dựa vào tên cột đã cho, ròi lấy giá trị ô đó
+    // tìm đúng cột trong excel dựa vào tên cột đã cho, ròi lấy giá trị ô đó
     private String getCellString(Row row, Map<String, Integer> colIndex, String colName) {
         Integer idx = colIndex.get(colName);
         if (idx == null)
