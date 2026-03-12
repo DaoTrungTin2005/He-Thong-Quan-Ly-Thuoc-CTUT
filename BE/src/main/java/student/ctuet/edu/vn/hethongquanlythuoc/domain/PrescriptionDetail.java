@@ -34,6 +34,10 @@ public class PrescriptionDetail {
     @JoinColumn(name = "ma_thuoc", nullable = false)
     private Medicine medicine;
 
+    @ManyToOne
+    @JoinColumn(name = "ma_lo_thuoc")
+    private MedicineBatch batch;
+
     @Column(name = "so_luong", nullable = false)
     private int quantity;
 
