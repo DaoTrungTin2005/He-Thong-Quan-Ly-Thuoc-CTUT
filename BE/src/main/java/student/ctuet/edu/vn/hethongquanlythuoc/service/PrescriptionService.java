@@ -98,8 +98,8 @@ public class PrescriptionService {
         }).toList();
 
         prescription.setDetails(details);
-        prescriptionRepository.save(prescription);
-        return mapToResponse(prescription);
+        Prescription saved = prescriptionRepository.save(prescription); 
+        return mapToResponse(saved);
     }
 
     // ========================= GENERATE MÃ ĐƠN =========================
