@@ -1,9 +1,27 @@
 import Title from "./Title";
 import VectorSearch from "../assets/svg/VectorSearch.jsx";
+import { useState } from "react";
+
 export default function Search({
   hideHeader = true,
   title = "Quản Lí Tài Khoản",
+  onSearch,
 }) {
+  const [keyword, setKeyword] = useState("");
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      onSearch?.(keyword.trim());
+    }
+  };
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setKeyword(value);
+    // Nếu xóa hết thì reset về danh sách đầy đủ
+    if (value === "") onSearch?.("");
+  };
+
   return (
     <div className="w-4/5 h-12 pl-5 absolute top-0 left-1/5 overflow-hidden flex items-center bg-[#264580]">
       <Title
@@ -17,6 +35,9 @@ export default function Search({
           <VectorSearch />
           <input
             type="text"
+            value={keyword}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
             className="outline-none w-full text-xs text-black"
             placeholder="Tìm kiếm"
           />

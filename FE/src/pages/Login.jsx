@@ -1,6 +1,19 @@
+import { useNavigate } from "react-router-dom";
 import FormLogin from "../components/FormLogin.jsx";
 import AuthLayout from "../layouts/AuthLayout.jsx";
+
 export default function Login() {
+  const navigate = useNavigate();
+
+  const handleLoginSuccess = (data) => {
+    const role = data.account?.role;
+    if (role === "ROLE_ADMIN") {
+      navigate("/account");
+    } else {
+      navigate("/account");
+    }
+  };
+
   return (
     <AuthLayout>
       <div className="flex flex-col w-full items-center justify-center absolute top-[62%]">
@@ -12,7 +25,7 @@ export default function Login() {
             Phòng Y Tế - Trường Đại học Kỹ Thuật Công Nghệ Cần Thơ
           </h2>
         </div>
-        <FormLogin />
+        <FormLogin onSuccess={handleLoginSuccess} />
       </div>
     </AuthLayout>
   );

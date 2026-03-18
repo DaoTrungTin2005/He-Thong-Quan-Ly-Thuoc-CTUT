@@ -3,11 +3,22 @@ import SideBar from "../components/SideBar.jsx";
 import Button from "../components/Button.jsx";
 import Search from "../components/Search.jsx";
 import LogoCTUT from "../assets/images/LogoCTUT.png";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import { logout } from "../services/authService";
+import { useState } from "react";
+
 export default function MainLayout({
   hideHeader = true,
   title = "Quản Lí Tài Khoản",
 }) {
+  const navigate = useNavigate();
+  const [keyword, setKeyword] = useState("");
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
+
   return (
     <>
       <div className="flex w-full bg-[#D4D4D4]">
@@ -20,13 +31,21 @@ export default function MainLayout({
             />
           </div>
           <SideBar />
-          <Button className="bottom-[10%] bg-[#951010] text-white hover:scale-105 transition-transform absolute left-[30%] font-bold">
+          <Button
+            className="bottom-[10%] bg-[#951010] text-white hover:scale-105 transition-transform absolute left-[30%] font-bold"
+            onClick={handleLogout}
+          >
             ĐĂNG XUẤT
           </Button>
         </div>
-        <div className=" w-full h-screen relative flex flex-col">
-          <Search hideHeader={hideHeader} title={title} />
-          <Outlet />
+        <div className="w-full h-screen relative flex flex-col">
+          <Search
+            hideHeader={hideHeader}
+            title={title}
+            onSearch={(kw) => setKeyword(kw)}
+          />
+          {/* Truyền keyword xuống page con qua Outlet context */}
+          <Outlet context={{ keyword }} />
         </div>
       </div>
     </>
