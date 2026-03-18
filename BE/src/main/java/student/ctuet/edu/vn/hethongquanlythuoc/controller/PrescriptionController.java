@@ -48,4 +48,16 @@ public class PrescriptionController {
                 response));
     }
 
+    @PatchMapping("/{prescriptionCode}/return")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<PrescriptionResponse>> returnMedicine(
+            @PathVariable String prescriptionCode) {
+
+        PrescriptionResponse response = prescriptionService.returnPrescription(prescriptionCode);
+
+        return ResponseEntity.ok(ApiResponse.success(
+                "Hoàn thuốc thành công",
+                response));
+    }
+
 }

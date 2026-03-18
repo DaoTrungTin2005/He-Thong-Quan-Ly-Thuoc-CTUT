@@ -174,6 +174,37 @@ public class PrescriptionService {
                 return mapToResponse(saved);
         }
 
+        // ========================= HOÀN THUỐC =========================
+        @Transactional
+        public PrescriptionResponse returnPrescription(String prescriptionCode) {
+
+                Prescription prescription = prescriptionRepository.findById(prescriptionCode)
+                                .orElseThrow(() -> new AppException(ErrorCode.PRESCRIPTION_NOT_FOUND));
+
+                if (!"Đã cấp thuốc".equals(prescription.getStatus().getStatusName())) {
+                        throw new AppException(ErrorCode.PRESCRIPTION_INVALID_STATUS);
+                }
+
+                Account account = getCurrentAccount();
+
+                for (PrescriptionDetail detail : prescription.getDetails()) {
+                        MedicineBatch lo = detail.getBatch();
+                        if (lo != null) {
+                                lo.setRemainingQuantity(lo.getRemainingQuantity() + detail.getQuantity());
+                                batchRepository.save(lo);
+                                saveHistory(lo, account, MedicineHistory.HistoryType.IMPORT, detail.getQuantity());
+                        }
+                }
+
+                PrescriptionStatus daHoanThuoc = statusRepository.findByStatusName("Đã hoàn thuốc")
+                                .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
+
+                prescription.setStatus(daHoanThuoc);
+                Prescription saved = prescriptionRepository.save(prescription);
+
+                return mapToResponse(saved);
+        }
+
         // ==========================LẤY TÀI KHOẢN HIỆN TẠI===========================
 
         private Account getCurrentAccount() {
