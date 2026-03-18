@@ -20,7 +20,7 @@ export default function Medicine() {
       id: 1,
       medicine: "Thuốc chuột",
       unit: "bao",
-      lockedStatus: "lockMedicine", // "lockMedicine", "unlockMedicine"
+      lockedStatus: "unlockMedicine", // "lockMedicine", "unlockMedicine"
       batches: [
         {
           batchId: "LO001",
@@ -38,9 +38,7 @@ export default function Medicine() {
     },
   ];
   const fields = [
-    { name: "tenThuoc", label: "Tên thuốc:", width: "full" },
-    { name: "soLuong", label: "Số lượng:", width: "half" },
-    { name: "donViTinh", label: "Đơn vị tính:", width: "half" },
+    { name: "soLuong", label: "Số lượng:", width: "full" },
     { name: "hanSuDung", label: "Hạn sử dụng:", width: "full" },
   ];
   const [show, setShow] = useState(false);

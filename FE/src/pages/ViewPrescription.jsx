@@ -25,6 +25,6 @@ export default function ViewPrescription() {
     // Ghi chú
     notes: "Uống thuốc sau bữa ăn, nghỉ ngơi đầy đủ",
   };
-  return <FormPrescription mode="view" status="padding" initialData={data} />;
+  return <FormPrescription mode="edit" status="pending" initialData={data} />;
   //   dispensed completed
 }

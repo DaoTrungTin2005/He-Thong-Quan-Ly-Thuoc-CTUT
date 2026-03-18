@@ -4,6 +4,45 @@ import FormListMedicine from "./FormListMedicine";
 import FormChoseMedicine from "./FormChoseMedicine";
 import { useState } from "react";
 
+const MEDICINES = [
+  { id: 1, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 2, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 3, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 4, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 5, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 6, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 7, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 8, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 9, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 10, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 11, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 12, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 13, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 14, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 15, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 16, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 17, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 18, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 36, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 19, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 20, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 21, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 22, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 23, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 24, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 25, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 26, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 27, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 28, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 29, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 30, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 31, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 32, name: "Ibulin 100ml", unit: "Chai" },
+  { id: 33, name: "Bisacodyl HG H/100V", unit: "Viên" },
+  { id: 34, name: "Paracetamol 500mg", unit: "Viên" },
+  { id: 35, name: "Ibulin 100ml", unit: "Chai" },
+];
+
 export default function FormPrescription({
   mode = "create",
   status = null,
@@ -13,13 +52,15 @@ export default function FormPrescription({
 }) {
   const [showChoose, setShowChoose] = useState(false);
   const [medicines, setMedicines] = useState(initialData.medicines || []);
-  const [isEditing, setIsEditing] = useState(false); // State để theo dõi trạng thái đang sửa
+  const [isEditing, setIsEditing] = useState(false);
+  const [snapshot, setSnapshot] = useState([]);
 
   // Xác định các trạng thái hiển thị
   const isCreateMode = mode === "create";
   const isViewMode = mode === "view";
-  const canEdit = isViewMode && status === "pending"; // Chỉ đơn "chờ cấp thuốc" mới có thể sửa
-  const isReadOnly = isViewMode && !isEditing; // Chỉ đọc khi đang ở chế độ xem và không đang sửa
+  const isEditMode = mode === "edit";
+  const canEdit = isEditMode && status === "pending";
+  const isReadOnly = isViewMode || (isEditMode && !isEditing);
 
   // Hiển thị các nút
   const showAddButton = isCreateMode || isEditing;
@@ -28,78 +69,60 @@ export default function FormPrescription({
   const showEditButton = canEdit && !isEditing;
   const showSaveButton = isEditing;
 
+  const validateMedicines = () => {
+    return medicines.every(
+      (med) =>
+        med.quantity !== "" &&
+        med.quantity !== null &&
+        Number(med.quantity) >= 1,
+    );
+  };
+
   const handleConfirmMedicine = (selected) => {
-    const newMedicines = selected.map((med) => ({ ...med, quantity: "" }));
+    const newMedicines = selected.map((med) => ({ ...med, quantity: 1 }));
     setMedicines((prev) => [...prev, ...newMedicines]);
     setShowChoose(false);
   };
 
   const updateQuantity = (id, quantity) => {
+    const value = quantity === "" ? "" : Math.max(1, Number(quantity));
     setMedicines((prev) =>
-      prev.map((med) => (med.id === id ? { ...med, quantity } : med)),
+      prev.map((med) => (med.id === id ? { ...med, quantity: value } : med)),
     );
   };
 
   const handleEdit = () => {
+    setSnapshot(medicines);
     setIsEditing(true);
   };
 
   const handleSaveChanges = () => {
+    if (!validateMedicines()) {
+      alert("Vui lòng nhập số lượng cho tất cả thuốc (tối thiểu 1)");
+      return;
+    }
     onSave(medicines);
     setIsEditing(false);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateMedicines()) {
+      alert("Vui lòng nhập số lượng cho tất cả thuốc (tối thiểu 1)");
+      return;
+    }
+    onSave(medicines);
+  };
+
   const handleCancel = () => {
     if (isEditing) {
-      // Hủy sửa - khôi phục dữ liệu ban đầu
-      setMedicines(initialData.medicines || []);
+      setMedicines(snapshot);
       setIsEditing(false);
     } else {
-      // Quay lại hoặc hủy tạo đơn
       onBack();
     }
   };
 
-  const MEDICINES = [
-    { id: 1, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 2, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 3, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 4, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 5, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 6, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 7, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 8, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 9, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 10, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 11, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 12, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 13, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 14, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 15, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 16, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 17, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 18, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 36, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 19, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 20, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 21, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 22, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 23, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 24, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 25, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 26, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 27, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 28, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 29, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 30, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 31, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 32, name: "Ibulin 100ml", unit: "Chai" },
-    { id: 33, name: "Bisacodyl HG H/100V", unit: "Viên" },
-    { id: 34, name: "Paracetamol 500mg", unit: "Viên" },
-    { id: 35, name: "Ibulin 100ml", unit: "Chai" },
-  ];
-
-  // Lấy text cho các nút
   const getCancelButtonText = () => {
     if (isEditing) return "HỦY SỬA";
     if (isViewMode) return "QUAY LẠI";
@@ -126,7 +149,10 @@ export default function FormPrescription({
         <h1 className="text-center pt-5 font-bold text-2xl pb-3">
           PHIẾU KÊ ĐƠN THUỐC
         </h1>
-        <form className="flex flex-col items-center justify-center gap-3">
+        <form
+          className="flex flex-col items-center justify-center gap-3"
+          onSubmit={handleSubmit}
+        >
           <div className="flex items-center justify-between gap-10 w-9/10 px-18">
             <div className="w-[55%] bg-[#F7F7F7] rounded-sm p-10 flex flex-col items-center justify-center gap-5 shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)]">
               <h2 className="font-bold text-sm">👤 THÔNG TIN BỆNH NHÂN</h2>
@@ -144,7 +170,7 @@ export default function FormPrescription({
                   />
                   <label
                     htmlFor="fullname"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px]peer-not-placeholder-shown:text-gray-500"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
                   >
                     HỌ VÀ TÊN
                   </label>
@@ -162,7 +188,7 @@ export default function FormPrescription({
                   />
                   <label
                     htmlFor="studentId"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px]peer-not-placeholder-shown:text-gray-500"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
                   >
                     MÃ SỐ SINH VIÊN
                   </label>
@@ -182,7 +208,7 @@ export default function FormPrescription({
                   />
                   <label
                     htmlFor="classCode"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px]peer-not-placeholder-shown:text-gray-500"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
                   >
                     MÃ LỚP
                   </label>
@@ -200,7 +226,7 @@ export default function FormPrescription({
                   />
                   <label
                     htmlFor="insurance"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px]peer-not-placeholder-shown:text-gray-500"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
                   >
                     MÃ SỐ BẢO HIỂM Y TẾ
                   </label>
@@ -222,7 +248,7 @@ export default function FormPrescription({
                 />
                 <label
                   htmlFor="finalDiagnosis"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px]peer-not-placeholder-shown:text-gray-500"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
                 >
                   KẾT LUẬN CHUẨN ĐOÁN
                 </label>

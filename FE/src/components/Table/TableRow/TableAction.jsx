@@ -152,12 +152,20 @@ export default function TableAction({
             Mở khóa thuốc
           </Button>
         ) : (
-          <Button
-            onClick={handleLockMedicine}
-            className="bg-[#B51C1C] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-          >
-            Khóa thuốc
-          </Button>
+          <>
+            <Button
+              onClick={handleLockMedicine}
+              className="bg-[#B51C1C] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
+            >
+              Khóa thuốc
+            </Button>
+            <Button
+              onClick={handleAdd}
+              className="bg-[#264580] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
+            >
+              Nhập thuốc
+            </Button>
+          </>
         )}
 
         {/* Chỉ hiển thị sau khi chọn lô */}
@@ -169,14 +177,6 @@ export default function TableAction({
             >
               Truy xuất
             </Button>
-
-            <Button
-              onClick={handleAdd}
-              className="bg-[#264580] h-6 text-xs flex justify-self-end items-center text-white font-medium mr hover:opacity-80 transition"
-            >
-              Nhập thuốc
-            </Button>
-
             {rowData.status === "unexported" && (
               <>
                 <Button
