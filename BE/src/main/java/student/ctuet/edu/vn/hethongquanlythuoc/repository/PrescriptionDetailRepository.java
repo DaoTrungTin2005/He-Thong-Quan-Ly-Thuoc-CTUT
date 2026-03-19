@@ -7,4 +7,6 @@ import student.ctuet.edu.vn.hethongquanlythuoc.domain.PrescriptionDetail;
 
 public interface PrescriptionDetailRepository extends JpaRepository<PrescriptionDetail, Long> {
     List<PrescriptionDetail> findByPrescriptionPrescriptionCode(String prescriptionCode);
+
+    void deleteByPrescriptionPrescriptionCode(String prescriptionCode);
 }

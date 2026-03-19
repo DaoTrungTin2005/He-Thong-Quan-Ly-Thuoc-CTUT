@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,6 +58,19 @@ public class PrescriptionController {
 
         return ResponseEntity.ok(ApiResponse.success(
                 "Hoàn thuốc thành công",
+                response));
+    }
+
+    @PutMapping("/{prescriptionCode}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<PrescriptionResponse>> updatePrescription(
+            @PathVariable String prescriptionCode,
+            @RequestBody CreatePrescriptionRequest request) {
+
+        PrescriptionResponse response = prescriptionService.updatePrescription(prescriptionCode, request);
+
+        return ResponseEntity.ok(ApiResponse.success(
+                "Cập nhật đơn thuốc thành công",
                 response));
     }
 

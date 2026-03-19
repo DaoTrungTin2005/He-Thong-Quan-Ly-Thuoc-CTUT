@@ -205,6 +205,49 @@ public class PrescriptionService {
                 return mapToResponse(saved);
         }
 
+        // ========================= CẬP NHẬT ĐƠN =========================
+        @Transactional
+        public PrescriptionResponse updatePrescription(String prescriptionCode, CreatePrescriptionRequest request) {
+
+                Prescription prescription = prescriptionRepository.findById(prescriptionCode)
+                                .orElseThrow(() -> new AppException(ErrorCode.PRESCRIPTION_NOT_FOUND));
+
+                if (!"Chờ thuốc".equals(prescription.getStatus().getStatusName())) {
+                        throw new AppException(ErrorCode.PRESCRIPTION_INVALID_STATUS);
+                }
+
+                Student student = studentRepository.findByStudentCode(request.studentCode())
+                                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
+
+                prescription.setStudent(student);
+                prescription.setDiagnosis(request.diagnosis());
+                prescription.setNote(request.note());
+
+                detailRepository.deleteByPrescriptionPrescriptionCode(prescriptionCode);
+                detailRepository.flush();
+
+                List<PrescriptionDetail> newDetails = new ArrayList<>();
+
+                for (var item : request.details()) {
+                        Medicine medicine = medicineRepository.findById(item.medicineId())
+                                        .orElseThrow(() -> new AppException(ErrorCode.MEDICINE_NOT_FOUND));
+
+                        PrescriptionDetail detail = new PrescriptionDetail();
+                        detail.setPrescription(prescription);
+                        detail.setMedicine(medicine);
+                        detail.setQuantity(item.quantity());
+                        detail.setUnit(medicine.getUnit());
+
+                        newDetails.add(detail);
+                }
+                
+                prescription.getDetails().clear();
+                prescription.getDetails().addAll(newDetails);
+
+                Prescription saved = prescriptionRepository.save(prescription);
+                return mapToResponse(saved);
+        }
+
         // ==========================LẤY TÀI KHOẢN HIỆN TẠI===========================
 
         private Account getCurrentAccount() {
@@ -221,7 +264,7 @@ public class PrescriptionService {
                 return String.format("%s-%03d", prefix, count + 1);
         }
 
-        // =========================  LƯU LỊCH SỬ =========================
+        // ========================= LƯU LỊCH SỬ =========================
         private void saveHistory(MedicineBatch batch, Account account,
                         MedicineHistory.HistoryType type, int quantity) {
                 MedicineHistory history = new MedicineHistory();
