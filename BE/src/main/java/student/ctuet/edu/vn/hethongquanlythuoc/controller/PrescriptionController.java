@@ -1,8 +1,10 @@
 package student.ctuet.edu.vn.hethongquanlythuoc.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,6 +85,18 @@ public class PrescriptionController {
         prescriptionService.deletePrescription(prescriptionCode);
 
         return ResponseEntity.ok(ApiResponse.success("Xóa đơn thuốc thành công", null));
+    }
+
+    @GetMapping("/{prescriptionCode}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<PrescriptionResponse>> getPrescription(
+            @PathVariable String prescriptionCode) {
+
+        PrescriptionResponse response = prescriptionService.getPrescription(prescriptionCode);
+
+        return ResponseEntity.ok(ApiResponse.success(
+                "Lấy thông tin đơn thuốc thành công",
+                response));
     }
 
 }
