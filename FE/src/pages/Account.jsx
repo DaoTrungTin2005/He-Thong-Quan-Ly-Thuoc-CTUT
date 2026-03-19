@@ -3,14 +3,18 @@ import add from "../assets/images/add.png";
 import Table from "../components/Table/Table.jsx";
 import FormChangePass from "../components/FormChangePass.jsx";
 import { useState, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
-import { getAccounts } from "../services/accountService";
+import { useOutletContext, useNavigate } from "react-router-dom";
+import {
+  getAccounts,
+  lockAccount,
+  unlockAccount,
+} from "../services/listAccountService";
 
 export default function Account() {
+  const navigate = useNavigate();
   const columns = [
-    { key: "id", label: "ID", align: "center" },
+    { key: "stt", label: "STT", align: "center" },
     { key: "username", label: "Tên đăng nhập", align: "left" },
-    // "name" giữ nguyên key của bạn → map từ fullname của API ở dưới
     { key: "name", label: "Tên người dùng", align: "left" },
     { key: "email", label: "Email", align: "left" },
     { key: "role", label: "Vai trò", align: "left" },
@@ -29,7 +33,7 @@ export default function Account() {
     totalPages: 0,
     totalElements: 0,
   });
-
+  const [selectedAccountId, setSelectedAccountId] = useState(null);
   const fetchAccounts = async (page = 0, kw = "") => {
     setLoading(true);
     setError("");
@@ -41,11 +45,11 @@ export default function Account() {
         keyword: kw,
       });
 
-      // Map fullname → name để khớp với key của Table
-      const mapped = res.content.map((item) => ({
+      const mapped = res.content.map((item, index) => ({
         ...item,
         name: item.fullname,
-        status: item.status === "Đang sử dụng" ? "active" : "inactive", // ← thêm dòng này
+        status: item.status === "Đang sử dụng" ? "active" : "inactive",
+        stt: page * pagination.size + index + 1,
       }));
 
       setData(mapped);
@@ -62,26 +66,37 @@ export default function Account() {
     }
   };
 
-  // Gọi lại API mỗi khi keyword thay đổi, reset về trang 0
   useEffect(() => {
     fetchAccounts(0, keyword ?? "");
   }, [keyword]);
 
   const handleEdit = (row) => {
-    console.log("Sửa thông tin:", row);
+    navigate("/account/update", { state: { id: row.id } });
   };
 
   const handleResetPassword = (row) => {
-    console.log("Đặt lại mật khẩu:", row);
+    setSelectedAccountId(row.id);
     setShowChangePasswordForm(true);
   };
 
-  const handleLock = (row) => {
-    console.log("Khóa tài khoản:", row);
+  const handleLock = async (row) => {
+    try {
+      await lockAccount(row.id);
+      // Refresh lại trang hiện tại sau khi khóa
+      fetchAccounts(pagination.page, keyword ?? "");
+    } catch (err) {
+      setError(err.message || "Khóa tài khoản thất bại.");
+    }
   };
 
-  const handleUnlock = (row) => {
-    console.log("Mở khóa:", row);
+  const handleUnlock = async (row) => {
+    try {
+      await unlockAccount(row.id);
+      // Refresh lại trang hiện tại sau khi mở khóa
+      fetchAccounts(pagination.page, keyword ?? "");
+    } catch (err) {
+      setError(err.message || "Mở khóa tài khoản thất bại.");
+    }
   };
 
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
@@ -91,7 +106,10 @@ export default function Account() {
       <h1 className="text-black text-center font-bold text-2xl pt-5 pb-3">
         DANH SÁCH TÀI KHOẢN
       </h1>
-      <Button className="bg-[#CA20A5] h-6 text-xs flex justify-self-end items-center text-white font-bold mr-15">
+      <Button
+        className="bg-[#CA20A5] h-6 text-xs flex justify-self-end items-center text-white font-bold mr-15"
+        onClick={() => navigate("/account/create")}
+      >
         <img src={add} alt="Add Icon" className="w-3 h-3 mr-1" />
         Thêm tài khoản
       </Button>
@@ -142,6 +160,7 @@ export default function Account() {
         isVisible={showChangePasswordForm}
         onClose={() => setShowChangePasswordForm(false)}
         showCurrentPassword={false}
+        accountId={selectedAccountId}
       />
     </div>
   );

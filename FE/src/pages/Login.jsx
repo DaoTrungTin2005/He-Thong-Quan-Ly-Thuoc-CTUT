@@ -1,16 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import FormLogin from "../components/FormLogin.jsx";
 import AuthLayout from "../layouts/AuthLayout.jsx";
+import { isAuthenticated } from "../services/authService";
+import { useEffect } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
+  useEffect(() => {
+    const check = async () => {
+      const loggedIn = await isAuthenticated();
+      if (loggedIn) navigate("/account", { replace: true });
+    };
+    check();
+  }, []);
 
   const handleLoginSuccess = (data) => {
     const role = data.account?.role;
-    if (role === "ROLE_ADMIN") {
+    if (role === "ADMIN") {
       navigate("/account");
     } else {
-      navigate("/account");
+      navigate("/personal");
     }
   };
 

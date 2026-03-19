@@ -17,7 +17,7 @@ import { tokenStorage } from "../lib/tokenStorage.js";
  */
 export async function login(usernameOrEmail, password) {
   const data = await request(
-    "/v1/auth/login",
+    "/auth/login",
     {
       method: "POST",
       body: JSON.stringify({ usernameOrEmail, password }),
@@ -42,7 +42,7 @@ export async function logout() {
     ]);
 
     if (accessToken && refreshToken) {
-      await request("/v1/auth/logout", {
+      await request("/auth/logout", {
         method: "POST",
         body: JSON.stringify({ accessToken, refreshToken }),
       });
