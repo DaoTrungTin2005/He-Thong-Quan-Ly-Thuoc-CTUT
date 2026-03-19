@@ -3,6 +3,8 @@ package student.ctuet.edu.vn.hethongquanlythuoc.controller;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +32,18 @@ public class StudentController {
         List<StudentResponse> response = studentService.importFromExcel(file);
         return ResponseEntity.ok(ApiResponse.success(
                 "Import thành công " + response.size() + " sinh viên", response));
+    }
+
+    @GetMapping("/{studentCode}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<StudentResponse>> getStudent(
+            @PathVariable String studentCode) {
+
+        StudentResponse response = studentService.getByStudentCode(studentCode);
+        
+        return ResponseEntity.ok(ApiResponse.success(
+                "Lấy thông tin sinh viên thành công",
+                response));
     }
 
 }
