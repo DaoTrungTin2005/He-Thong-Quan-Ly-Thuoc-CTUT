@@ -18,6 +18,10 @@ export default function TableRow({
   onAccess,
   onLockMedicine,
   onUnlockMedicine,
+  onView,
+  onDelete,
+  onDispense,
+  onReturn,
 }) {
   const isEven = index % 2 === 0;
 
@@ -68,7 +72,7 @@ export default function TableRow({
             <TableAction
               rowData={
                 type === "medicine"
-                  ? { ...row, status: selectedBatch?.status ?? null } // lockedStatus vẫn có từ ...row
+                  ? { ...row, status: selectedBatch?.status ?? null }
                   : row
               }
               type={type}
@@ -82,6 +86,10 @@ export default function TableRow({
               onAccess={onAccess}
               onLockMedicine={onLockMedicine}
               onUnlockMedicine={onUnlockMedicine}
+              onView={onView}
+              onDelete={onDelete}
+              onDispense={onDispense}
+              onReturn={onReturn}
             />
           ) : (
             <span>{row[col.key]}</span>

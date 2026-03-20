@@ -2,46 +2,9 @@ import Button from "./Button";
 import add from "../assets/images/add.png";
 import FormListMedicine from "./FormListMedicine";
 import FormChoseMedicine from "./FormChoseMedicine";
-import { useState } from "react";
-
-const MEDICINES = [
-  { id: 1, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 2, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 3, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 4, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 5, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 6, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 7, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 8, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 9, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 10, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 11, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 12, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 13, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 14, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 15, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 16, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 17, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 18, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 36, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 19, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 20, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 21, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 22, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 23, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 24, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 25, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 26, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 27, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 28, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 29, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 30, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 31, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 32, name: "Ibulin 100ml", unit: "Chai" },
-  { id: 33, name: "Bisacodyl HG H/100V", unit: "Viên" },
-  { id: 34, name: "Paracetamol 500mg", unit: "Viên" },
-  { id: 35, name: "Ibulin 100ml", unit: "Chai" },
-];
+import { useState, useEffect } from "react";
+import { getMedicines } from "../services/medicineService";
+import { getStudentByCode } from "../services/studentService";
 
 export default function FormPrescription({
   mode = "create",
@@ -55,6 +18,17 @@ export default function FormPrescription({
   const [isEditing, setIsEditing] = useState(false);
   const [snapshot, setSnapshot] = useState([]);
 
+  // Controlled form fields
+  const [studentId, setStudentId] = useState(initialData.studentId || "");
+  const [classCode, setClassCode] = useState(initialData.classCode || "");
+  const [fullname, setFullname] = useState(initialData.fullname || "");
+  const [insurance, setInsurance] = useState(initialData.insurance || "");
+  const [diagnosis, setDiagnosis] = useState(initialData.diagnosis || "");
+  const [notes, setNotes] = useState(initialData.notes || "");
+
+  // Validation errors
+  const [formError, setFormError] = useState("");
+
   // Xác định các trạng thái hiển thị
   const isCreateMode = mode === "create";
   const isViewMode = mode === "view";
@@ -62,20 +36,74 @@ export default function FormPrescription({
   const canEdit = isEditMode && status === "pending";
   const isReadOnly = isViewMode || (isEditMode && !isEditing);
 
-  // Hiển thị các nút
   const showAddButton = isCreateMode || isEditing;
   const showRemoveButton = isCreateMode || isEditing;
   const showCreateButton = isCreateMode;
   const showEditButton = canEdit && !isEditing;
   const showSaveButton = isEditing;
 
-  const validateMedicines = () => {
-    return medicines.every(
-      (med) =>
-        med.quantity !== "" &&
-        med.quantity !== null &&
-        Number(med.quantity) >= 1,
-    );
+  // Medicines list từ API (cho FormChoseMedicine)
+  const [medicineList, setMedicineList] = useState([]);
+  useEffect(() => {
+    getMedicines({ page: 0, size: 100 })
+      .then((res) =>
+        setMedicineList(
+          res.content.map((m) => ({ id: m.id, name: m.name, unit: m.unit })),
+        ),
+      )
+      .catch(() => {});
+  }, []);
+
+  // Realtime auto-fill thông tin sinh viên theo MSSV (debounce 400ms)
+  useEffect(() => {
+    if (isReadOnly) return;
+    const timer = setTimeout(async () => {
+      if (!studentId.trim()) {
+        setFullname("");
+        setClassCode("");
+        setInsurance("");
+        return;
+      }
+      try {
+        const res = await getStudentByCode(studentId.trim());
+        if (res) {
+          setFullname(res.fullName ?? "");
+          setClassCode(res.classCode ?? "");
+          setInsurance(res.insuranceCode ?? "");
+        }
+      } catch {
+        setFullname("");
+        setClassCode("");
+        setInsurance("");
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [studentId]);
+
+  const validate = () => {
+    if (!diagnosis.trim()) {
+      setFormError("Vui lòng nhập chẩn đoán.");
+      return false;
+    }
+    if (medicines.length === 0) {
+      setFormError("Vui lòng thêm ít nhất một loại thuốc.");
+      return false;
+    }
+    if (
+      medicines.some(
+        (med) =>
+          med.quantity === "" ||
+          med.quantity === null ||
+          Number(med.quantity) < 1,
+      )
+    ) {
+      setFormError(
+        "Vui lòng nhập số lượng hợp lệ cho tất cả thuốc (tối thiểu 1).",
+      );
+      return false;
+    }
+    setFormError("");
+    return true;
   };
 
   const handleConfirmMedicine = (selected) => {
@@ -97,21 +125,15 @@ export default function FormPrescription({
   };
 
   const handleSaveChanges = () => {
-    if (!validateMedicines()) {
-      alert("Vui lòng nhập số lượng cho tất cả thuốc (tối thiểu 1)");
-      return;
-    }
-    onSave(medicines);
+    if (!validate()) return;
+    onSave({ studentCode: studentId, diagnosis, note: notes, medicines });
     setIsEditing(false);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateMedicines()) {
-      alert("Vui lòng nhập số lượng cho tất cả thuốc (tối thiểu 1)");
-      return;
-    }
-    onSave(medicines);
+    if (!validate()) return;
+    onSave({ studentCode: studentId, diagnosis, note: notes, medicines });
   };
 
   const handleCancel = () => {
@@ -125,9 +147,17 @@ export default function FormPrescription({
 
   const getCancelButtonText = () => {
     if (isEditing) return "HỦY SỬA";
-    if (isViewMode) return "QUAY LẠI";
+    if (isViewMode || isEditMode) return "QUAY LẠI";
     return "HỦY TẠO ĐƠN";
   };
+
+  const inputClass = (readOnly) =>
+    `peer focus:shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] w-full h-12 rounded-sm bg-[linear-gradient(90deg,#F7F7F7_80.29%,#98BBFF_100%)] px-3 pt-5 text-sm outline-none font-bold ${
+      readOnly ? "cursor-not-allowed opacity-75" : ""
+    }`;
+
+  const labelClass =
+    "absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500";
 
   return (
     <>
@@ -162,16 +192,12 @@ export default function FormPrescription({
                     type="text"
                     id="fullname"
                     placeholder=" "
-                    defaultValue={initialData.fullname || ""}
+                    value={fullname}
+                    onChange={(e) => setFullname(e.target.value)}
                     disabled={isReadOnly}
-                    className={`peer focus:shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] w-full h-12 rounded-sm bg-[linear-gradient(90deg,#F7F7F7_80.29%,#98BBFF_100%)] px-3 pt-5 text-sm outline-none font-bold ${
-                      isReadOnly ? "cursor-not-allowed opacity-75" : ""
-                    }`}
+                    className={inputClass(isReadOnly)}
                   />
-                  <label
-                    htmlFor="fullname"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
-                  >
+                  <label htmlFor="fullname" className={labelClass}>
                     HỌ VÀ TÊN
                   </label>
                 </div>
@@ -180,16 +206,12 @@ export default function FormPrescription({
                     type="text"
                     id="studentId"
                     placeholder=" "
-                    defaultValue={initialData.studentId || ""}
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
                     disabled={isReadOnly}
-                    className={`peer focus:shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] w-full h-12 rounded-sm bg-[linear-gradient(90deg,#F7F7F7_80.29%,#98BBFF_100%)] px-3 pt-5 text-sm outline-none font-bold ${
-                      isReadOnly ? "cursor-not-allowed opacity-75" : ""
-                    }`}
+                    className={inputClass(isReadOnly)}
                   />
-                  <label
-                    htmlFor="studentId"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
-                  >
+                  <label htmlFor="studentId" className={labelClass}>
                     MÃ SỐ SINH VIÊN
                   </label>
                 </div>
@@ -200,16 +222,12 @@ export default function FormPrescription({
                     type="text"
                     id="classCode"
                     placeholder=" "
-                    defaultValue={initialData.classCode || ""}
+                    value={classCode}
+                    onChange={(e) => setClassCode(e.target.value)}
                     disabled={isReadOnly}
-                    className={`peer focus:shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] w-full h-12 rounded-sm bg-[linear-gradient(90deg,#F7F7F7_80.29%,#98BBFF_100%)] px-3 pt-5 text-sm outline-none font-bold ${
-                      isReadOnly ? "cursor-not-allowed opacity-75" : ""
-                    }`}
+                    className={inputClass(isReadOnly)}
                   />
-                  <label
-                    htmlFor="classCode"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
-                  >
+                  <label htmlFor="classCode" className={labelClass}>
                     MÃ LỚP
                   </label>
                 </div>
@@ -218,16 +236,12 @@ export default function FormPrescription({
                     type="text"
                     id="insurance"
                     placeholder=" "
-                    defaultValue={initialData.insurance || ""}
+                    value={insurance}
+                    onChange={(e) => setInsurance(e.target.value)}
                     disabled={isReadOnly}
-                    className={`peer focus:shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] w-full h-12 rounded-sm bg-[linear-gradient(90deg,#F7F7F7_80.29%,#98BBFF_100%)] px-3 pt-5 text-sm outline-none font-bold ${
-                      isReadOnly ? "cursor-not-allowed opacity-75" : ""
-                    }`}
+                    className={inputClass(isReadOnly)}
                   />
-                  <label
-                    htmlFor="insurance"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
-                  >
+                  <label htmlFor="insurance" className={labelClass}>
                     MÃ SỐ BẢO HIỂM Y TẾ
                   </label>
                 </div>
@@ -235,24 +249,29 @@ export default function FormPrescription({
             </div>
             <div className="w-[40%] bg-[#F7F7F7] rounded-sm p-10 flex flex-col items-center justify-center gap-5 shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)]">
               <h2 className="font-bold text-sm">🩺 CHẨN ĐOÁN</h2>
-              <div className="relative shadow-sm">
+              <div className="relative shadow-sm w-full">
                 <input
                   type="text"
                   id="finalDiagnosis"
                   placeholder=" "
-                  defaultValue={initialData.diagnosis || ""}
+                  value={diagnosis}
+                  onChange={(e) => setDiagnosis(e.target.value)}
                   disabled={isReadOnly}
-                  className={`peer focus:shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] w-full h-12 rounded-sm bg-[linear-gradient(90deg,#F7F7F7_80.29%,#98BBFF_100%)] px-3 pt-5 text-sm outline-none font-bold ${
-                    isReadOnly ? "cursor-not-allowed opacity-75" : ""
+                  className={`${inputClass(isReadOnly)} ${
+                    !diagnosis.trim() && formError
+                      ? "border border-red-400"
+                      : ""
                   }`}
                 />
-                <label
-                  htmlFor="finalDiagnosis"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none transition-all duration-200 peer-focus:top-2 peer-focus:text-[10px] peer-focus:text-gray-500 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[10px] peer-not-placeholder-shown:text-gray-500"
-                >
+                <label htmlFor="finalDiagnosis" className={labelClass}>
                   KẾT LUẬN CHUẨN ĐOÁN
                 </label>
               </div>
+              {!diagnosis.trim() && formError && (
+                <p className="text-red-500 text-xs w-full">
+                  Vui lòng nhập chẩn đoán.
+                </p>
+              )}
             </div>
           </div>
           <div className="flex flex-col items-center justify-center gap-5 w-8/10 min-h-50 bg-[#F7F7F7] rounded-sm shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] p-5">
@@ -283,18 +302,25 @@ export default function FormPrescription({
                 ))}
               </div>
             )}
+            {medicines.length === 0 && !isReadOnly && formError && (
+              <p className="text-red-500 text-xs">
+                Vui lòng thêm ít nhất một loại thuốc.
+              </p>
+            )}
           </div>
           <div className="flex flex-col items-center justify-center gap-3 w-8/10 h-40 px-20 bg-[#F7F7F7] rounded-sm p-10 shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)]">
             <h2 className="font-bold text-sm">📝 GHI CHÚ VÀ LỜI DẶN</h2>
             <input
               type="text"
-              defaultValue={initialData.notes || ""}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
               disabled={isReadOnly}
               className={`outline-none bg-white w-4/5 h-15 ${
                 isReadOnly ? "cursor-not-allowed opacity-75" : ""
               }`}
             />
           </div>
+
           <div className="flex items-center justify-center gap-50 pt-5 pb-10">
             <Button
               type="button"
@@ -339,7 +365,7 @@ export default function FormPrescription({
       {showChoose && (
         <div className="fixed inset-0 left-100 bg-opacity-50 flex items-center justify-center z-50">
           <FormChoseMedicine
-            data={MEDICINES}
+            data={medicineList}
             selectedMedicines={medicines}
             onCancel={() => setShowChoose(false)}
             onConfirm={handleConfirmMedicine}

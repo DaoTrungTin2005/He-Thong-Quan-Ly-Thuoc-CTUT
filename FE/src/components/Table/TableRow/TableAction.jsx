@@ -13,6 +13,10 @@ export default function TableAction({
   onRemove,
   onLockMedicine,
   onUnlockMedicine,
+  onView,
+  onDelete,
+  onDispense,
+  onReturn,
 }) {
   const handleAccess = () => {
     if (onAccess) {
@@ -91,6 +95,38 @@ export default function TableAction({
       onEdit(rowData);
     } else {
       console.log("Sửa thông tin:", rowData);
+    }
+  };
+
+  const handleView = () => {
+    if (onView) {
+      onView(rowData);
+    } else {
+      console.log("Xem chi tiết:", rowData);
+    }
+  };
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(rowData);
+    } else {
+      console.log("Xóa đơn:", rowData);
+    }
+  };
+
+  const handleDispense = () => {
+    if (onDispense) {
+      onDispense(rowData);
+    } else {
+      console.log("Cấp thuốc:", rowData);
+    }
+  };
+
+  const handleReturn = () => {
+    if (onReturn) {
+      onReturn(rowData);
+    } else {
+      console.log("Hoàn thuốc:", rowData);
     }
   };
 
@@ -205,15 +241,24 @@ export default function TableAction({
     if (rowData.status === "waiting") {
       return (
         <div className="flex items-center justify-self-start gap-2">
-          <Button className="bg-[#3D8E10] h-6 w-30 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          <Button
+            onClick={handleView}
+            className="bg-[#3D8E10] h-6 w-30 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition"
+          >
             Xem chi tiết
           </Button>
 
-          <Button className="bg-[#264580] h-6 w-25 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          <Button
+            onClick={handleDispense}
+            className="bg-[#264580] h-6 w-25 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition"
+          >
             Cấp thuốc
           </Button>
 
-          <Button className="bg-[#8E1010] h-6 w-15 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          <Button
+            onClick={handleDelete}
+            className="bg-[#8E1010] h-6 w-15 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition"
+          >
             Xóa
           </Button>
         </div>
@@ -223,7 +268,10 @@ export default function TableAction({
     if (rowData.status === "completed") {
       return (
         <div className="flex items-center justify-self-start gap-2">
-          <Button className="bg-[#3D8E10] h-6 w-30 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          <Button
+            onClick={handleView}
+            className="bg-[#3D8E10] h-6 w-30 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition"
+          >
             Xem chi tiết
           </Button>
         </div>
@@ -233,10 +281,16 @@ export default function TableAction({
     if (rowData.status === "dispensed") {
       return (
         <div className="flex items-center justify-self-start gap-2">
-          <Button className="bg-[#3D8E10] h-6 w-30 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          <Button
+            onClick={handleView}
+            className="bg-[#3D8E10] h-6 w-30 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition"
+          >
             Xem chi tiết
           </Button>
-          <Button className="bg-[#C0D204] h-6 w-25 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition">
+          <Button
+            onClick={handleReturn}
+            className="bg-[#C0D204] h-6 w-25 text-xs flex justify-center items-center text-white font-medium hover:opacity-80 transition"
+          >
             Hoàn thuốc
           </Button>
         </div>
