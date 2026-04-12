@@ -37,13 +37,16 @@ public class MedicineBatch {
     private String batchNumber;
 
     @Column(name = "so_luong", nullable = false)
-    private Integer quantity;
+    private int quantity;
 
     @Column(name = "so_luong_con_lai", nullable = false)
-    private Integer remainingQuantity;
+    private int remainingQuantity;
 
     @Column(name = "ngay_het_han", nullable = false)
     private LocalDate expiryDate;
+
+    @Column(name = "so_luong_het_han", columnDefinition = "integer default 0")
+    private int expiredQuantity = 0;
 
     @OneToMany(mappedBy = "batch")
     private List<MedicineHistory> histories;

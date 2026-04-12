@@ -259,14 +259,14 @@ public class ExcelExportService {
                         int totalExport = histories.stream()
                                         .filter(h -> h.getType() == MedicineHistory.HistoryType.EXPORT)
                                         .mapToInt(MedicineHistory::getQuantity).sum();
-
                         List<MedicineBatch> batches = batchRepository.findByMedicineId(medicineId);
                         int remaining = batches.stream().mapToInt(MedicineBatch::getRemainingQuantity).sum();
                         int expired = batches.stream()
-                                        .filter(b -> b.getExpiryDate() != null && b.getExpiryDate().isBefore(to))
-                                        .mapToInt(MedicineBatch::getRemainingQuantity).sum();
-                        int valid = remaining - expired;
-
+                                        .filter(b -> b.getExpiryDate() != null
+                                                        && b.getExpiryDate().isBefore(LocalDate.now()))
+                                        .mapToInt(MedicineBatch::getExpiredQuantity)
+                                        .sum();
+                        int valid = remaining; 
                         Row row = sheet.createRow(rowNum++);
                         row.setHeightInPoints(20);
 

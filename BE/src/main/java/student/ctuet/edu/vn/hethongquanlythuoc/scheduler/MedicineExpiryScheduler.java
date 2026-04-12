@@ -68,7 +68,7 @@ public class MedicineExpiryScheduler {
                 
                 for (MedicineBatch batch : expiredBatches) {
 
-                
+                batch.setExpiredQuantity(batch.getRemainingQuantity());
                 batch.setRemainingQuantity(0);
                 batchRepository.save(batch);
 

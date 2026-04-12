@@ -174,9 +174,11 @@ public class PdfExportService {
                         List<MedicineBatch> batches = batchRepository.findByMedicineId(medicineId);
                         int remaining = batches.stream().mapToInt(MedicineBatch::getRemainingQuantity).sum();
                         int expired = batches.stream()
-                                        .filter(b -> b.getExpiryDate() != null && b.getExpiryDate().isBefore(to))
-                                        .mapToInt(MedicineBatch::getRemainingQuantity).sum();
-                        int valid = remaining - expired;
+                                        .filter(b -> b.getExpiryDate() != null
+                                                        && b.getExpiryDate().isBefore(LocalDate.now()))
+                                        .mapToInt(MedicineBatch::getExpiredQuantity)
+                                        .sum();
+                        int valid = remaining; 
 
                         table.addCell(makeDataCell(String.valueOf(stt++), fontData, Element.ALIGN_CENTER));
                         table.addCell(makeDataCell(medicine.getName(), fontData, Element.ALIGN_LEFT));
