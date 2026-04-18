@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Account;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.LoginHistory;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.AccountResponse;
-import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.ChangePasswordRequest;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.person.ChangePasswordRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.person.LoginHistoryResponse;
 import student.ctuet.edu.vn.hethongquanlythuoc.service.ProfileService;
 import student.ctuet.edu.vn.hethongquanlythuoc.utils.ApiResponse;

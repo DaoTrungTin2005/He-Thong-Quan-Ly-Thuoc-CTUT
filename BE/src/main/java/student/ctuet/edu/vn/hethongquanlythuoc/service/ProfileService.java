@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.Account;
 import student.ctuet.edu.vn.hethongquanlythuoc.domain.LoginHistory;
-import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.account.ChangePasswordRequest;
+import student.ctuet.edu.vn.hethongquanlythuoc.domain.dto.person.ChangePasswordRequest;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.AppException;
 import student.ctuet.edu.vn.hethongquanlythuoc.exception.ErrorCode;
 import student.ctuet.edu.vn.hethongquanlythuoc.repository.AccountRepository;
