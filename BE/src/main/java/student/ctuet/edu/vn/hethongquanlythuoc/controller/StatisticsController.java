@@ -27,7 +27,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/overview")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<OverviewResponse>> getOverview(
             @RequestParam(required = false) Integer month,
             @RequestParam(required = false) Integer year) {
@@ -41,7 +41,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/medicine-import-export")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<List<MedicineImportExportResponse>>> getMedicineImportExport(
             @RequestParam(required = false) LocalDate from,
             @RequestParam(required = false) LocalDate to) {
@@ -55,7 +55,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/expiry-warning")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<List<ExpiryWarningResponse>>> getExpiryWarning() {
 
         return ResponseEntity.ok(ApiResponse.success(

@@ -32,7 +32,7 @@ public class PrescriptionController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<PrescriptionResponse>> createPrescription(
             @RequestBody CreatePrescriptionRequest request) {
 
@@ -44,7 +44,7 @@ public class PrescriptionController {
     }
 
     @PatchMapping("/{prescriptionCode}/dispense")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<PrescriptionResponse>> dispensePrescription(
             @PathVariable String prescriptionCode) {
 
@@ -56,7 +56,7 @@ public class PrescriptionController {
     }
 
     @PatchMapping("/{prescriptionCode}/return")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<PrescriptionResponse>> returnMedicine(
             @PathVariable String prescriptionCode) {
 
@@ -68,7 +68,7 @@ public class PrescriptionController {
     }
 
     @PutMapping("/{prescriptionCode}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<PrescriptionResponse>> updatePrescription(
             @PathVariable String prescriptionCode,
             @RequestBody CreatePrescriptionRequest request) {
@@ -81,7 +81,7 @@ public class PrescriptionController {
     }
 
     @DeleteMapping("/{prescriptionCode}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<Void>> deletePrescription(
             @PathVariable String prescriptionCode) {
 
@@ -91,7 +91,7 @@ public class PrescriptionController {
     }
 
     @GetMapping("/{prescriptionCode}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<PrescriptionResponse>> getPrescription(
             @PathVariable String prescriptionCode) {
 
@@ -103,7 +103,7 @@ public class PrescriptionController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<Page<PrescriptionResponse>>> getPrescriptions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

@@ -31,7 +31,7 @@ public class NotificationController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<List<NotificationResponse>>> getNotifications() {
         Account account = getCurrentAccount();
         return ResponseEntity.ok(ApiResponse.success(

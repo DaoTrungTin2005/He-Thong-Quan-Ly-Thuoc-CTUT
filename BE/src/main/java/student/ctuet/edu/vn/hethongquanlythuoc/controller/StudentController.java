@@ -35,7 +35,7 @@ public class StudentController {
     }
 
     @GetMapping("/{studentCode}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<StudentResponse>> getStudent(
             @PathVariable String studentCode) {
 
@@ -47,7 +47,7 @@ public class StudentController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<List<StudentResponse>>> getStudents() {
         return ResponseEntity.ok(ApiResponse.success(
                 "Lấy danh sách sinh viên thành công",

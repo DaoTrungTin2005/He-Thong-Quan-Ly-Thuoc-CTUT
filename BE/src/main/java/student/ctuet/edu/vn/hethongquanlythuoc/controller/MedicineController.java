@@ -49,7 +49,7 @@ public class MedicineController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<MedicineResponse>> createMedicine(
             @Valid @RequestBody CreateMedicineRequest request) {
 
@@ -61,7 +61,7 @@ public class MedicineController {
     }
 
     @PostMapping("/{medicineId}/batches")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<MedicineResponse>> importBatch(
             @PathVariable long medicineId,
             @Valid @RequestBody ImportBatchRequest request) {
@@ -74,7 +74,7 @@ public class MedicineController {
     }
 
     @PutMapping("/{medicineId}/batches/{batchId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<MedicineResponse>> updateBatch(
             @PathVariable long medicineId,
             @PathVariable long batchId,
@@ -87,7 +87,7 @@ public class MedicineController {
     }
 
     @DeleteMapping("/batches/{batchId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<Void>> deleteBatch(@PathVariable long batchId) {
 
         medicineService.deleteBatch(batchId);
@@ -97,28 +97,28 @@ public class MedicineController {
     }
 
     @PatchMapping("/{medicineId}/lock")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<MedicineResponse>> lockMedicine(@PathVariable long medicineId) {
         MedicineResponse response = medicineService.lockMedicine(medicineId);
         return ResponseEntity.ok(ApiResponse.success("Khóa thuốc thành công", response));
     }
 
     @PatchMapping("/{medicineId}/unlock")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<MedicineResponse>> unlockMedicine(@PathVariable long medicineId) {
         MedicineResponse response = medicineService.unlockMedicine(medicineId);
         return ResponseEntity.ok(ApiResponse.success("Mở khóa thuốc thành công", response));
     }
 
     @GetMapping("/batches/{batchId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<MedicineResponse>> getMedicineByBatchId(@PathVariable long batchId) {
         MedicineResponse response = medicineService.getMedicineByBatchId(batchId);
         return ResponseEntity.ok(ApiResponse.success("Lấy thông tin thuốc theo lô thành công", response));
     }
 
     @GetMapping("/{medicineId}/trace")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<TraceResponse>> traceMedicine(
             @PathVariable long medicineId,
             @RequestParam(required = false) LocalDate from,
@@ -132,7 +132,7 @@ public class MedicineController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<ApiResponse<Page<MedicineResponse>>> getMedicines(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -152,7 +152,7 @@ public class MedicineController {
     }
 
     @GetMapping("/export/excel")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<byte[]> exportReport(
             @RequestParam(required = false) LocalDate from,
             @RequestParam(required = false) LocalDate to) throws Exception {
@@ -172,7 +172,7 @@ public class MedicineController {
     }
 
     @GetMapping("/export/pdf")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<byte[]> exportPdf(
             @RequestParam(required = false) LocalDate from,
             @RequestParam(required = false) LocalDate to) throws Exception {
