@@ -5,8 +5,9 @@ import Search from "../components/Search.jsx";
 import LogoCTUT from "../assets/images/LogoCTUT.png";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../services/authService";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { getMedicines } from "../services/medicineService";
+import { useViewportScale } from "../hooks/useViewportScale";
 
 function useRouteKeyword(pathname, searchBatch) {
   const [state, setState] = useState({
@@ -15,7 +16,6 @@ function useRouteKeyword(pathname, searchBatch) {
     trackedPathname: pathname,
   });
 
-  // Tính giá trị mới ngay trong render — không dùng effect
   const nextKeyword =
     state.trackedPathname !== pathname && !searchBatch ? "" : state.keyword;
 
@@ -62,13 +62,30 @@ export default function MainLayout({
   const navigate = useNavigate();
   const location = useLocation();
   const searchBatch = location.state?.searchBatch ?? null;
+  const searchBatchT = location.state?._t ?? null; // ← đọc timestamp
+
+  const scale = useViewportScale();
 
   const { keyword, resolvedSearchBatch, setKeyword, setResolvedSearchBatch } =
     useRouteKeyword(location.pathname, searchBatch);
 
-  // Resolve searchBatch → tên thuốc (chỉ có async mới cần effect)
+  // Xóa location.state sau khi đọc → tránh F5 còn searchBatch cũ
+  const clearedRef = useRef(false);
+  useEffect(() => {
+    if (clearedRef.current) return;
+    if (location.state?.searchBatch) {
+      clearedRef.current = true;
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, []);
+
+  // Resolve searchBatch → tên thuốc
+  // Depend vào searchBatchT: mỗi lần click tạo Date.now() mới → luôn chạy lại
   useEffect(() => {
     if (!searchBatch) return;
+
+    setKeyword("");
+    setResolvedSearchBatch(null);
 
     const resolveBatch = async () => {
       try {
@@ -97,7 +114,7 @@ export default function MainLayout({
     };
 
     resolveBatch();
-  }, [searchBatch, setKeyword, setResolvedSearchBatch]);
+  }, [searchBatchT]); // ← dùng searchBatchT thay vì locationKey
 
   const handleLogout = async () => {
     await logout();
@@ -105,7 +122,7 @@ export default function MainLayout({
   };
 
   return (
-    <>
+    <div style={{ zoom: scale }}>
       <div className="flex w-full bg-[#D4D4D4]">
         <div className="h-screen w-1/5 shadow-xl bg-white flex flex-col fixed z-10 top-0 left-0">
           <div className="flex items-center pl-12 pt-5">
@@ -133,6 +150,6 @@ export default function MainLayout({
           <Outlet context={{ keyword, searchBatch: resolvedSearchBatch }} />
         </div>
       </div>
-    </>
+    </div>
   );
 }
