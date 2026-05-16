@@ -48,7 +48,7 @@ export default function Personal() {
 
   return (
     <div className="w-3/4 bg-white absolute top-20 left-105 h-5/6 rounded-2xl shadow-xl">
-      <div className="w-5/6 bg-white absolute left-25 top-2 h-45 rounded-2xl shadow-xl flex items-center justify-between gap-10 p-10">
+      <div className="w-5/6 bg-white absolute left-25 top-5 h-45 rounded-2xl shadow-xl flex items-center justify-between gap-10 p-10">
         <div className="flex items-center justify-center gap-5">
           <img src={avatar} alt="Avatar" />
           <div className="flex flex-col justify-center gap-2">
@@ -92,7 +92,7 @@ export default function Personal() {
         </div>
       </div>
 
-      <div className="w-5/6 bg-white absolute left-25 bottom-2 h-3/5 rounded-2xl shadow-xl">
+      <div className="w-5/6 bg-white absolute left-25 bottom-20 h-3/5 rounded-2xl shadow-xl">
         <h1 className="text-black text-center font-bold text-2xl pt-5 pb-1">
           LỊCH SỬ ĐĂNG NHẬP
         </h1>
