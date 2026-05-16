@@ -1,4 +1,4 @@
-import backgroundImage from "../assets/images/background.png";
+import backgroundImage from "../assets/images/Background.png";
 export default function AuthLayout({ children }) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative w-full">
