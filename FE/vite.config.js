@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://active-backgrounds-browsing-cause.trycloudflare.com",
+        target: "https://he-thong-quan-ly-thuoc-ctut-production.up.railway.app",
         changeOrigin: true,
         secure: false,
       },
