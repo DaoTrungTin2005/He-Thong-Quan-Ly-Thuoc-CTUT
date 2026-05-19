@@ -7,9 +7,12 @@ import Logout from "../assets/svg/LogoutIcon.jsx";
 import Table from "../components/Table/Table.jsx";
 import FormChangePass from "../components/FormChangePass.jsx";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getProfile, getLoginHistory } from "../services/profileService";
+import { logout } from "../services/authService";
 
 export default function Personal() {
+  const navigate = useNavigate();
   const columns = [
     { key: "loginTime", label: "Thời gian", align: "left" },
     // { key: "deviceName", label: "Tên thiết bị", align: "left" },
@@ -45,6 +48,10 @@ export default function Personal() {
       })
       .catch((err) => console.error("Lỗi lấy lịch sử đăng nhập:", err));
   }, []);
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   return (
     <div className="w-3/4 bg-white absolute top-20 left-105 h-5/6 rounded-2xl shadow-xl">
@@ -76,7 +83,7 @@ export default function Personal() {
           <Button
             className="w-30 h-8 flex items-center justify-center text-[9px] bg-white border border-1 border-[#E90012] text-[#E90012] font-bold gap-3 hover:bg-[#F5F5F5] transition"
             onClick={() => {
-              // Logic đăng xuất
+              handleLogout();
             }}
           >
             <Logout />
