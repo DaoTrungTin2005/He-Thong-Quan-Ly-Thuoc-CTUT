@@ -18,14 +18,11 @@ function useRouteKeyword(pathname, searchBatch) {
 
   const nextKeyword =
     state.trackedPathname !== pathname && !searchBatch ? "" : state.keyword;
-
   const nextResolved =
     state.trackedPathname !== pathname && !searchBatch
       ? null
       : state.resolvedSearchBatch;
-
   const nextTracked = pathname;
-
   const isStale =
     state.trackedPathname !== pathname ||
     state.keyword !== nextKeyword ||
@@ -62,14 +59,13 @@ export default function MainLayout({
   const navigate = useNavigate();
   const location = useLocation();
   const searchBatch = location.state?.searchBatch ?? null;
-  const searchBatchT = location.state?._t ?? null; // ← đọc timestamp
+  const searchBatchT = location.state?._t ?? null;
 
   const scale = useViewportScale();
 
   const { keyword, resolvedSearchBatch, setKeyword, setResolvedSearchBatch } =
     useRouteKeyword(location.pathname, searchBatch);
 
-  // Xóa location.state sau khi đọc → tránh F5 còn searchBatch cũ
   const clearedRef = useRef(false);
   useEffect(() => {
     if (clearedRef.current) return;
@@ -79,11 +75,8 @@ export default function MainLayout({
     }
   }, []);
 
-  // Resolve searchBatch → tên thuốc
-  // Depend vào searchBatchT: mỗi lần click tạo Date.now() mới → luôn chạy lại
   useEffect(() => {
     if (!searchBatch) return;
-
     setKeyword("");
     setResolvedSearchBatch(null);
 
@@ -95,7 +88,6 @@ export default function MainLayout({
           sortBy: "id",
           sortDir: "asc",
         });
-
         let medicineName = "";
         for (const item of res.content) {
           const found = item.batches.find((b) => b.id === searchBatch);
@@ -104,7 +96,6 @@ export default function MainLayout({
             break;
           }
         }
-
         if (medicineName) setKeyword(medicineName);
         setResolvedSearchBatch(searchBatch);
       } catch (err) {
@@ -114,7 +105,7 @@ export default function MainLayout({
     };
 
     resolveBatch();
-  }, [searchBatchT]); // ← dùng searchBatchT thay vì locationKey
+  }, [searchBatchT]);
 
   const handleLogout = async () => {
     await logout();
@@ -122,13 +113,21 @@ export default function MainLayout({
   };
 
   return (
-    <div style={{ zoom: scale }}>
-      <div className="flex w-full bg-[#D4D4D4]">
-        <div className="h-screen w-1/5 shadow-xl bg-white flex flex-col fixed z-10 top-0 left-0">
+    <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+      <div
+        className="flex bg-[#D4D4D4]"
+        style={{
+          zoom: scale,
+          width: `${100 / scale}vw`,
+          height: `${100 / scale}vh`,
+        }}
+      >
+        {/* ── Sidebar ───────────────────────────────────────────────── */}
+        <div className="w-1/5 h-full bg-white shadow-xl flex flex-col flex-shrink-0 relative">
           <div className="flex items-center pl-12 pt-5">
             <img src={LogoCTUT} alt="Logo CTUT" className="w-10 h-10" />
             <Title
-              title="Hệ Thống Quản Lí Thuốc "
+              title="Hệ Thống Quản Lí Thuốc"
               subtitle="Trường Đại học Kĩ Thuật - Công Nghệ Cần Thơ"
             />
           </div>
@@ -140,14 +139,18 @@ export default function MainLayout({
             ĐĂNG XUẤT
           </Button>
         </div>
-        <div className="w-full h-screen relative flex flex-col">
+
+        {/* ── Vùng nội dung ─────────────────────────────────────────── */}
+        <div className="flex-1 h-full flex flex-col overflow-hidden">
           <Search
             hideHeader={hideHeader}
             title={title}
             keyword={keyword}
             onSearch={(kw) => setKeyword(kw)}
           />
-          <Outlet context={{ keyword, searchBatch: resolvedSearchBatch }} />
+          <div className="flex-1 flex justify-center items-center overflow-hidden">
+            <Outlet context={{ keyword, searchBatch: resolvedSearchBatch }} />
+          </div>
         </div>
       </div>
     </div>
