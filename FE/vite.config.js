@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://he-thong-quan-ly-thuoc-ctut-production.up.railway.app",
+        target: "https://he-thong-quan-ly-thuoc-ctut.onrender.com",
         changeOrigin: true,
         secure: false,
       },
