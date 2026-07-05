@@ -20,7 +20,6 @@ export default function FormChoseMedicine({
 
   const isSelected = (medId) => selected.find((m) => m.id === medId);
 
-  // Kiểm tra thuốc đã có trong đơn chưa
   const isAlreadyInPrescription = (medId) =>
     selectedMedicines.find((m) => m.id === medId);
 
