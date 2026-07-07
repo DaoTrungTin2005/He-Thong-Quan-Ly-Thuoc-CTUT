@@ -23,7 +23,7 @@ export default function CreatePrescription() {
     fetchProfile();
   }, []);
 
-  const handleSave = async ({ studentCode, diagnosis, note, medicines }) => {
+  const handleSave = async ({ studentCode, diagnosis, note, details }) => {
     setError("");
     try {
       await createPrescription({
@@ -31,17 +31,13 @@ export default function CreatePrescription() {
         diagnosis,
         note,
         medicalStaff: doctorName,
-        details: medicines.map((m) => ({
-          medicineId: m.id,
-          quantity: Number(m.quantity),
-        })),
+        details,
       });
       navigate("/prescription");
     } catch (err) {
       setError(err.message || "Tạo đơn thuốc thất bại.");
     }
   };
-
   return (
     <>
       {error && (

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FormPrescription from "../components/FormPrescription.jsx";
+import Alert from "../components/Alert.jsx";
 import {
   getPrescriptionByCode,
   updatePrescription,
 } from "../services/prescriptionService";
 
 export default function ViewPrescription() {
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const prescriptionCode = location.state?.prescriptionCode;
@@ -26,10 +28,12 @@ export default function ViewPrescription() {
     if (!prescriptionCode) return;
     const fetch = async () => {
       setLoading(true);
+      setError("");
       try {
         const res = await getPrescriptionByCode(prescriptionCode);
         setPrescriptionData(res);
       } catch (err) {
+        console.error(err);
         setError(err.message || "Không thể tải đơn thuốc.");
       } finally {
         setLoading(false);
@@ -38,65 +42,84 @@ export default function ViewPrescription() {
     fetch();
   }, [prescriptionCode]);
 
-  const handleSave = async ({ studentCode, diagnosis, note, medicines }) => {
+  const handleSave = async ({ studentCode, diagnosis, note, details }) => {
     setError("");
     try {
-      await updatePrescription(prescriptionCode, {
+      const updated = await updatePrescription(prescriptionCode, {
         studentCode,
         diagnosis,
         note,
-        details: medicines.map((m) => ({
-          medicineId: m.id,
-          quantity: Number(m.quantity),
-        })),
+        details,
       });
-      navigate("/prescription");
+
+      if (updated) {
+        setPrescriptionData(updated);
+      } else {
+        const fresh = await getPrescriptionByCode(prescriptionCode);
+        setPrescriptionData(fresh);
+      }
+
+      setShowSuccessAlert(true);
     } catch (err) {
+      console.error(err);
       setError(err.message || "Cập nhật đơn thuốc thất bại.");
     }
   };
-
   if (loading) {
     return (
       <p className="text-center text-gray-400 mt-20">Đang tải đơn thuốc...</p>
     );
   }
 
-  if (!prescriptionData) return null;
+  if (error && !prescriptionData) {
+    return <p className="text-center text-red-500 mt-20">{error}</p>;
+  }
 
+  if (!prescriptionData) return null;
   const initialData = {
-    doctorName: prescriptionData.medicalStaff ?? "", // ← dùng medicalStaff
+    doctorName: prescriptionData.medicalStaff ?? "",
     shift: prescriptionData.shift ?? "",
     startTime: prescriptionData.createdAt
       ? new Date(prescriptionData.createdAt).toLocaleString("vi-VN")
       : "",
-    fullname: prescriptionData.fullName ?? "",
-    studentId: prescriptionData.studentCode ?? "",
+    studentCode: prescriptionData.studentCode ?? "",
+    fullName: prescriptionData.fullName ?? "",
     classCode: prescriptionData.classCode ?? "",
-    insurance: prescriptionData.insuranceCode ?? "",
+    insuranceCode: prescriptionData.insuranceCode ?? "",
     diagnosis: prescriptionData.diagnosis ?? "",
-    notes: prescriptionData.note ?? "",
-    medicines: (prescriptionData.details ?? []).map((d) => ({
-      id: d.medicineId,
-      name: d.medicineName,
-      unit: d.unit,
-      quantity: d.quantity,
-    })),
+    note: prescriptionData.note ?? "",
+    details: prescriptionData.details ?? [],
   };
 
   return (
     <>
-      {error && (
-        <p className="text-red-500 text-sm text-center mt-2">{error}</p>
-      )}
-      <FormPrescription
-        key={prescriptionCode}
-        mode="edit"
-        status={mapStatus(prescriptionData.status)}
-        initialData={initialData}
-        onSave={handleSave}
-        onBack={() => navigate("/prescription")}
-      />
+      <div className="relative w-full h-full mt-[7%]">
+        {error && (
+          <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+        )}
+
+        <FormPrescription
+          key={prescriptionCode}
+          mode="edit"
+          status={mapStatus(prescriptionData.status)}
+          initialData={initialData}
+          onSave={handleSave}
+          onBack={() => navigate("/prescription")}
+        />
+
+        <Alert
+          show={showSuccessAlert}
+          onClose={() => setShowSuccessAlert(false)}
+          color="#14B319"
+          textPart1=""
+          main="Cập nhật đơn thuốc thành công"
+          textPart2=""
+          hidden="hidden"
+          Enter="Đã hiểu"
+          onCancel={() => setShowSuccessAlert(false)}
+          onEnter={() => setShowSuccessAlert(false)}
+        />
+      </div>
     </>
   );
 }
