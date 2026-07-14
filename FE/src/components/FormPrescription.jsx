@@ -7,6 +7,62 @@ import { useState, useEffect } from "react";
 import { getMedicines } from "../services/medicineService";
 import { getStudentByCode } from "../services/studentService";
 
+const defaultDosage = {
+  timesPerDay: 1,
+  amountPerTime: 1,
+  timeOfDay: { morning: false, noon: false, afternoon: false, evening: false },
+  mealRelation: "none",
+  mealMinutes: 30,
+  rawNote: "",
+};
+const parseDosageFromNote = (noteStr = "") => {
+  if (!noteStr)
+    return { ...defaultDosage, timeOfDay: { ...defaultDosage.timeOfDay } };
+
+  const result = {
+    ...defaultDosage,
+    timeOfDay: { ...defaultDosage.timeOfDay },
+  };
+  const remaining = [];
+
+  noteStr.split(" - ").forEach((part) => {
+    const timesMatch = part.match(/^(\d+)\s*lần\/ngày,\s*(\d+)\s*.*\/lần$/);
+    const timeMatch = part.match(/^uống vào (.+)$/);
+    const mealMatch = part.match(/^(trước|sau) khi ăn (\d+)\s*phút$/);
+
+    if (timesMatch) {
+      result.timesPerDay = Number(timesMatch[1]);
+      result.amountPerTime = Number(timesMatch[2]);
+    } else if (timeMatch) {
+      const labels = timeMatch[1].split(",").map((s) => s.trim());
+      result.timeOfDay.morning = labels.includes("sáng");
+      result.timeOfDay.noon = labels.includes("trưa");
+      result.timeOfDay.afternoon = labels.includes("chiều");
+      result.timeOfDay.evening = labels.includes("tối");
+    } else if (mealMatch) {
+      result.mealRelation = mealMatch[1] === "trước" ? "before" : "after";
+      result.mealMinutes = Number(mealMatch[2]);
+    } else if (part.trim()) {
+      remaining.push(part.trim());
+    }
+  });
+
+  result.rawNote = remaining.join(" - ");
+  return result;
+};
+
+const mapDetailsToMedicines = (details = []) =>
+  details.map((d) => ({
+    id: d.medicineId,
+    name: d.medicineName,
+    unit: d.unit,
+    quantity: d.quantity,
+    note: d.note ?? "",
+    stock: null,
+    stockError: "",
+    ...parseDosageFromNote(d.note),
+  }));
+
 export default function FormPrescription({
   mode = "create",
   status = null,
@@ -15,7 +71,9 @@ export default function FormPrescription({
   onSave = () => {},
 }) {
   const [showChoose, setShowChoose] = useState(false);
-  const [medicines, setMedicines] = useState(initialData.medicines || []);
+  const [medicines, setMedicines] = useState(
+    initialData.medicines ?? mapDetailsToMedicines(initialData.details),
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [snapshot, setSnapshot] = useState([]);
 
@@ -27,12 +85,12 @@ export default function FormPrescription({
   const currentDosageMedicine = dosageQueue[0] ?? null;
 
   // Controlled form fields
-  const [studentId, setStudentId] = useState(initialData.studentId || "");
+  const [studentId, setStudentId] = useState(initialData.studentCode || "");
   const [classCode, setClassCode] = useState(initialData.classCode || "");
-  const [fullname, setFullname] = useState(initialData.fullname || "");
-  const [insurance, setInsurance] = useState(initialData.insurance || "");
+  const [fullname, setFullname] = useState(initialData.fullName || "");
+  const [insurance, setInsurance] = useState(initialData.insuranceCode || "");
   const [diagnosis, setDiagnosis] = useState(initialData.diagnosis || "");
-  const [notes, setNotes] = useState(initialData.notes || "");
+  const [notes, setNotes] = useState(initialData.note || "");
 
   const [errors, setErrors] = useState({});
   const [studentError, setStudentError] = useState("");
@@ -56,6 +114,7 @@ export default function FormPrescription({
   useEffect(() => {
     getMedicines({ page: 0, size: 100 })
       .then((res) => {
+        console.log("getMedicines res:", res);
         const fullList = res.content.map((m) => ({
           id: m.id,
           name: m.name,
@@ -223,6 +282,15 @@ export default function FormPrescription({
     setIsEditing(true);
   };
 
+  // Chuyển state medicines nội bộ -> đúng cấu trúc details[] mà BE yêu cầu
+  // { medicineId, quantity, note } — khớp với response getPrescriptionByCode
+  const buildDetailsPayload = () =>
+    medicines.map((med) => ({
+      medicineId: med.id,
+      quantity: Number(med.quantity),
+      note: med.note ?? "",
+    }));
+
   const handleSaveChanges = () => {
     if (!validate()) return;
     onSave({
@@ -230,6 +298,7 @@ export default function FormPrescription({
       diagnosis,
       note: notes,
       medicines,
+      details: buildDetailsPayload(),
     });
     setIsEditing(false);
   };
@@ -242,6 +311,7 @@ export default function FormPrescription({
       diagnosis,
       note: notes,
       medicines,
+      details: buildDetailsPayload(),
     });
   };
 
@@ -274,11 +344,15 @@ export default function FormPrescription({
         style={{ padding: "30px" }}
         className="w-full h-9/10 flex flex-col min-h-0 relative"
       >
-        <div className="bg-white flex-1 min-h-0 rounded-2xl shadow-xl overflow-y-auto">
+        {/* Khung ngoài KHÔNG cuộn — chỉ danh sách thuốc bên trong mới cuộn */}
+        <div className="bg-white flex-1 min-h-0 rounded-2xl shadow-xl overflow-hidden flex flex-col">
           <div className="flex items-center justify-between py-2 px-5 flex-shrink-0">
             <div className="flex flex-col justify-center">
               <h2 className="text-sm font-bold text-[#264580]">
-                Cán bộ y tế: {initialData.doctorName || "Lê Thành Đạt"}
+                Cán bộ y tế:{" "}
+                {initialData.medicalStaff ||
+                  initialData.doctorName ||
+                  "Lê Thành Đạt"}
               </h2>
               <p className="text-xs italic">
                 Ca trực : {initialData.shift || "sáng 12/01/2026"}
@@ -290,15 +364,17 @@ export default function FormPrescription({
             </p>
           </div>
 
-          <h1 className="text-center pt-5 font-bold text-2xl pb-3">
+          <h1 className="text-center pt-5 font-bold text-2xl pb-3 flex-shrink-0">
             PHIẾU KÊ ĐƠN THUỐC
           </h1>
 
+          {/* Form chiếm hết phần còn lại, min-h-0 để con bên trong scroll đúng cách */}
           <form
-            className="flex flex-col items-center justify-center gap-3 px-8"
+            className="flex-1 min-h-0 flex flex-col items-center justify-start gap-3 px-8"
             onSubmit={handleSubmit}
           >
-            <div className="flex items-start justify-between gap-6 w-full">
+            {/* Hàng trên: thông tin bệnh nhân + chẩn đoán — cố định, không cuộn */}
+            <div className="flex items-start justify-between gap-6 w-full flex-shrink-0">
               <div className="flex-[55] bg-[#F7F7F7] rounded-sm p-8 flex flex-col items-center gap-5 shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)]">
                 <h2 className="font-bold text-sm">👤 THÔNG TIN BỆNH NHÂN</h2>
                 <div className="flex items-center justify-between gap-6 pb-6 w-full">
@@ -409,41 +485,61 @@ export default function FormPrescription({
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-5 w-full bg-[#F7F7F7] rounded-sm shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] p-5">
-              <h2 className="font-bold text-sm">💊 ĐƠN THUỐC</h2>
-              {showAddButton && (
-                <Button
-                  type="button"
-                  className="bg-[#264580] h-10 text-sm flex items-center text-white font-bold self-end gap-2"
-                  onClick={() => setShowChoose(true)}
-                >
-                  <img src={add} alt="Add Icon" className="w-3 h-3 mr-1" />
-                  Thêm thuốc
-                </Button>
-              )}
-              {medicines.length > 0 && (
-                <div className="w-full flex flex-col gap-3">
-                  {medicines.map((med) => (
-                    <FormListMedicine
-                      key={med.id}
-                      medicine={med}
-                      onQuantityChange={updateQuantity}
-                      onRemove={(id) =>
-                        setMedicines((prev) => prev.filter((m) => m.id !== id))
-                      }
-                      onEditDosage={handleEditDosage}
-                      showRemoveButton={showRemoveButton}
-                      isReadOnly={isReadOnly}
-                    />
-                  ))}
-                </div>
-              )}
+            {/* Danh sách thuốc — khối này co giãn lấp đầy không gian còn lại,
+                phần bên trong (list thuốc) mới thực sự overflow-y-auto và cuộn */}
+            <div className="flex-1 min-h-0 flex flex-col gap-3 w-full bg-[#F7F7F7] rounded-sm shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] p-5">
+              {/* Header cố định: tiêu đề canh GIỮA, nút thêm thuốc ghim bên phải — không cuộn theo */}
+              <div className="relative flex items-center justify-center flex-shrink-0">
+                <h2 className="font-bold text-sm">💊 ĐƠN THUỐC</h2>
+                {showAddButton && (
+                  <Button
+                    type="button"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 bg-[#264580] h-10 text-sm flex items-center text-white font-bold gap-2 p-2"
+                    onClick={() => setShowChoose(true)}
+                  >
+                    <img src={add} alt="Add Icon" className="w-3 h-3 mr-1" />
+                    Thêm thuốc
+                  </Button>
+                )}
+              </div>
+
+              {/* Vùng cuộn thực sự — có min-height đủ hiện trọn vẹn vài dòng thuốc,
+                  tránh bị cắt ngang giữa chừng một dòng */}
+              <div className="flex-1 max-h-[260px] overflow-y-auto p-2">
+                {medicines.length > 0 ? (
+                  <div className="w-full flex flex-col gap-3">
+                    {medicines.map((med) => (
+                      <FormListMedicine
+                        key={med.id}
+                        medicine={med}
+                        onQuantityChange={updateQuantity}
+                        onRemove={(id) =>
+                          setMedicines((prev) =>
+                            prev.filter((m) => m.id !== id),
+                          )
+                        }
+                        onEditDosage={handleEditDosage}
+                        showRemoveButton={showRemoveButton}
+                        isReadOnly={isReadOnly}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-400 text-sm italic text-center py-4">
+                    Chưa có thuốc nào trong đơn.
+                  </p>
+                )}
+              </div>
+
               {errors.medicines && (
-                <p className="text-red-500 text-xs">{errors.medicines}</p>
+                <p className="text-red-500 text-xs flex-shrink-0">
+                  {errors.medicines}
+                </p>
               )}
             </div>
 
-            <div className="flex flex-col items-center gap-3 w-full px-8 bg-[#F7F7F7] rounded-sm p-6 shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)]">
+            {/* Ghi chú — cố định, không cuộn */}
+            <div className="flex flex-col items-center gap-3 w-full px-8 bg-[#F7F7F7] rounded-sm p-6 shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)] flex-shrink-0">
               <h2 className="font-bold text-sm">📝 GHI CHÚ VÀ LỜI DẶN</h2>
               <input
                 type="text"
@@ -456,7 +552,8 @@ export default function FormPrescription({
               />
             </div>
 
-            <div className="flex items-center justify-center gap-16 pt-5 pb-10">
+            {/* Nút hành động — cố định, ghim cuối form */}
+            <div className="flex items-center justify-center gap-16 pt-5 pb-10 flex-shrink-0">
               <Button
                 type="button"
                 className="bg-[#D21013] w-44 h-10 text-sm font-bold text-white shadow-[3px_3px_4px_0_rgba(0,0,0,0.25)]"

@@ -22,6 +22,7 @@ export const getPrescriptions = (params = {}) => {
 /**
  * Lấy chi tiết đơn thuốc theo prescriptionCode
  * GET /api/v1/prescriptions/:prescriptionCode
+ * Response.data.details: [{ id, medicineId, medicineName, unit, quantity, note }]
  */
 export const getPrescriptionByCode = (prescriptionCode) =>
   api.get(`/prescriptions/${prescriptionCode}`);
@@ -29,7 +30,7 @@ export const getPrescriptionByCode = (prescriptionCode) =>
 /**
  * Tạo đơn thuốc mới
  * POST /api/v1/prescriptions
- * @param {{ studentCode, diagnosis, note, details: [{medicineId, quantity}] }} payload
+ * @param {{ studentCode: string, diagnosis: string, note: string, details: Array<{medicineId: number, quantity: number, note: string}> }} payload
  */
 export const createPrescription = (payload) =>
   api.post("/prescriptions", payload);
@@ -37,7 +38,7 @@ export const createPrescription = (payload) =>
 /**
  * Cập nhật đơn thuốc
  * PUT /api/v1/prescriptions/:prescriptionCode
- * @param {{ studentCode, diagnosis, note, details: [{medicineId, quantity}] }} payload
+ * @param {{ studentCode: string, diagnosis: string, note: string, details: Array<{medicineId: number, quantity: number, note: string}> }} payload
  */
 export const updatePrescription = (prescriptionCode, payload) =>
   api.put(`/prescriptions/${prescriptionCode}`, payload);
@@ -62,3 +63,35 @@ export const dispensePrescription = (prescriptionCode) =>
  */
 export const returnPrescription = (prescriptionCode) =>
   api.patch(`/prescriptions/${prescriptionCode}/return`);
+
+/**
+ * Xuất đơn thuốc dạng Word
+ * GET /api/v1/prescriptions/:prescriptionCode/export/word
+ * @returns {Promise<Blob>}
+ */
+export const exportPrescriptionWord = (prescriptionCode) =>
+  api.get(`/prescriptions/${prescriptionCode}/export/word`, {
+    responseType: "blob",
+  });
+
+/**
+ * Xuất đơn thuốc dạng PDF
+ * GET /api/v1/prescriptions/:prescriptionCode/export/pdf
+ * @returns {Promise<Blob>}
+ */
+export const exportPrescriptionPdf = (prescriptionCode) =>
+  api.get(`/prescriptions/${prescriptionCode}/export/pdf`, {
+    responseType: "blob",
+  });
+
+/**
+ * Helper dùng chung: tải blob về máy dưới dạng file
+ */
+export const downloadBlob = (blob, filename) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+};

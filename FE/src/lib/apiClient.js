@@ -4,6 +4,7 @@
  *  - Tự động đính kèm Authorization header
  *  - Tự động refresh accessToken khi hết hạn (401)
  *  - Hàng đợi request trong khi đang refresh (tránh race condition)
+ *  - Hỗ trợ tải file nhị phân (blob) như PDF, Word
  *  - Chỉ cần thay BASE_URL hoặc truyền endpoint khi gọi
  */
 
@@ -65,19 +66,20 @@ async function refreshAccessToken() {
  * Gửi HTTP request có xác thực JWT.
  *
  * @param {string} endpoint    - Path API, ví dụ: "/users" hoặc "/orders/123"
- * @param {RequestInit} options - fetch options (method, body, headers, ...)
+ * @param {RequestInit & { responseType?: "json" | "blob" }} options - fetch options (method, body, headers, responseType, ...)
  * @param {boolean} withAuth   - Có đính kèm Authorization header không (mặc định true)
- * @returns {Promise<any>}      - Parsed JSON response (field `data`)
+ * @returns {Promise<any>}      - Parsed JSON response (field `data`) hoặc Blob nếu responseType là "blob"
  * @throws {ApiError}
  */
 export async function request(endpoint, options = {}, withAuth = true) {
   const url = `${BASE_URL}${endpoint}`;
+  const { responseType, headers: customHeaders, ...restOptions } = options;
 
-  // Build headers
+  // Build headers — không set Content-Type: application/json khi tải file
   const headers = {
-    "Content-Type": "application/json",
+    ...(responseType !== "blob" && { "Content-Type": "application/json" }),
     "ngrok-skip-browser-warning": "true",
-    ...options.headers,
+    ...customHeaders,
   };
 
   if (withAuth) {
@@ -87,8 +89,9 @@ export async function request(endpoint, options = {}, withAuth = true) {
     }
   }
 
-  let res = await fetch(url, { ...options, headers });
+  let res = await fetch(url, { ...restOptions, headers });
   const isAuthEndpoint = endpoint.startsWith("/auth/");
+
   // ── 401: thử refresh rồi retry ─────────────
   if (res.status === 401 && withAuth && !isAuthEndpoint) {
     if (isRefreshing) {
@@ -97,14 +100,14 @@ export async function request(endpoint, options = {}, withAuth = true) {
         refreshQueue.push({ resolve, reject });
       });
       headers["Authorization"] = `Bearer ${newToken}`;
-      res = await fetch(url, { ...options, headers });
+      res = await fetch(url, { ...restOptions, headers });
     } else {
       isRefreshing = true;
       try {
         const newToken = await refreshAccessToken();
         processQueue(null, newToken);
         headers["Authorization"] = `Bearer ${newToken}`;
-        res = await fetch(url, { ...options, headers });
+        res = await fetch(url, { ...restOptions, headers });
       } catch (err) {
         processQueue(err, null);
         // Refresh thất bại → clear token, ném lỗi để UI redirect login
@@ -117,6 +120,21 @@ export async function request(endpoint, options = {}, withAuth = true) {
         isRefreshing = false;
       }
     }
+  }
+
+  // ── Response dạng file (blob): PDF, Word,... ──
+  if (responseType === "blob") {
+    if (!res.ok) {
+      let message = `HTTP ${res.status}`;
+      try {
+        const errJson = await res.json();
+        message = errJson.message || message;
+      } catch {
+        // Server không trả JSON lỗi kèm theo, giữ message mặc định
+      }
+      throw new ApiError(message, res.status);
+    }
+    return res.blob();
   }
 
   // ── Parse JSON ──────────────────────────────

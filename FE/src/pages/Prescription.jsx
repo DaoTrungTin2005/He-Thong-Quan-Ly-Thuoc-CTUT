@@ -145,8 +145,10 @@ export default function Prescription() {
     }
   };
 
-  const handlePrint = () => {
-    navigate("/prescription/report");
+  const handlePrint = (row) => {
+    navigate("/prescription/report", {
+      state: { prescriptionCode: row.prescriptionCode },
+    });
   };
 
   return (
@@ -154,7 +156,7 @@ export default function Prescription() {
       {/* Wrapper co dãn — Responsive wrapper */}
       <div
         style={{ padding: "30px" }}
-        className="relative w-full h-9/10 flex flex-col min-h-0"
+        className="relative w-full h-9/10 flex flex-col min-h-0 "
       >
         <div className="bg-white flex-1 min-h-0 rounded-2xl shadow-xl flex flex-col">
           {/* Header: title + nút kê đơn — Title + create button */}
@@ -223,38 +225,38 @@ export default function Prescription() {
             </div>
           )}
         </div>
+
+        <Alert
+          show={showDeleteAlert}
+          onClose={() => setShowDeleteAlert(false)}
+          onCancel={() => setShowDeleteAlert(false)}
+          onEnter={handleConfirmDelete}
+          textPart1="Bạn chắc chắn muốn xóa đơn thuốc của"
+          main={pendingDelete?.fullName ?? ""}
+          textPart2="khỏi danh sách không?"
+          Cancel="Hủy bỏ"
+          Enter="Tiến hành xóa"
+        />
+
+        <Alert
+          show={showInsufficientAlert}
+          onClose={() => setShowInsufficientAlert(false)}
+          onCancel={() => setShowInsufficientAlert(false)}
+          onEnter={() => {
+            setShowInsufficientAlert(false);
+            navigate("/prescription/view", {
+              state: { prescriptionCode: pendingDispenseRow?.prescriptionCode },
+            });
+          }}
+          color="#B51C1C"
+          textPart1=""
+          main={insufficientMessage}
+          textPart2=""
+          hidden="unhidden"
+          Cancel="Hủy"
+          Enter="Xem chi tiết"
+        />
       </div>
-
-      <Alert
-        show={showDeleteAlert}
-        onClose={() => setShowDeleteAlert(false)}
-        onCancel={() => setShowDeleteAlert(false)}
-        onEnter={handleConfirmDelete}
-        textPart1="Bạn chắc chắn muốn xóa đơn thuốc của"
-        main={pendingDelete?.fullName ?? ""}
-        textPart2="khỏi danh sách không?"
-        Cancel="Hủy bỏ"
-        Enter="Tiến hành xóa"
-      />
-
-      <Alert
-        show={showInsufficientAlert}
-        onClose={() => setShowInsufficientAlert(false)}
-        onCancel={() => setShowInsufficientAlert(false)}
-        onEnter={() => {
-          setShowInsufficientAlert(false);
-          navigate("/prescription/view", {
-            state: { prescriptionCode: pendingDispenseRow?.prescriptionCode },
-          });
-        }}
-        color="#B51C1C"
-        textPart1=""
-        main={insufficientMessage}
-        textPart2=""
-        hidden="unhidden"
-        Cancel="Hủy"
-        Enter="Xem chi tiết"
-      />
     </>
   );
 }
